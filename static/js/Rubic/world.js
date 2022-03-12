@@ -11,12 +11,11 @@ class World {
         THREEx.WindowResize(this.renderer, this.camera);
         THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
 	    this.controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );  
-        this.scene.add(addLight());
+        this.scene.add(addLight(size));
         this.geom = geometry;
         this.rubic = new THREE.Object3D();
         this.rubic.add(this.geom);
         this.scene.add(this.rubic);
-
         var axis = new THREE.AxisHelper(10);
         this.scene.add(axis);
     }
@@ -32,18 +31,15 @@ class World {
 
     update()
     {
-	    // delta = change in time since last call (in seconds)
-	    //var delta = this.clock.getDelta(); 
 	    /*
         if ( this.keyboard.pressed("1") )
 		    console.debug('press 1');
 	    if ( this.keyboard.pressed("2") )
 		    console.debug('press 2');
-        //*/
+        */
         this.controls.update();
         var delta = this.clock.getDelta();
         return delta;
-        
         //this.geom.rotation.x += delta * THREE.Math.degToRad(30)
         //this.geom.rotation.y += delta * THREE.Math.degToRad(45)
     }
@@ -77,15 +73,26 @@ function createRenderer() {
     return renderer
 }
 
-function addLight() {
+function addLight(size) {
     var light = new THREE.Object3D();
-    var l1 = new THREE.DirectionalLight(0xffffff, 1);
-	var l2 = new THREE.PointLight(0xffffff);
-    var l3 = new THREE.PointLight(0xffffff);
-    light.add(l1);
-    light.add(l2);
-    light.add(l3);
-    l2.position.set(25,25,20);
-    l3.position.set(-25,-25,-20);
+    var dist = 0.8 * size;
+	var lf = new THREE.PointLight(0xffffff);
+    var lb = new THREE.PointLight(0xffffff);
+    var lr = new THREE.PointLight(0xffffff);
+    var ll = new THREE.PointLight(0xffffff);
+    var lu = new THREE.PointLight(0xffffff);
+    var ld = new THREE.PointLight(0xffffff);
+    light.add(lf);
+    light.add(lb);
+    light.add(lr);
+    light.add(ll);
+    light.add(lu);
+    light.add(ld);
+    lf.position.set(0, 0, dist);
+    lb.position.set(0,0,-dist);
+    ll.position.set(-dist, 0, 0);
+    lr.position.set(dist,0, 0);
+    lu.position.set(0, dist, 0);
+    ld.position.set(0,-dist, 0);
     return light
 }

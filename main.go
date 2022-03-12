@@ -5,21 +5,30 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 )
 
-//точка входа
-func main() {
-	//пишем в консоль о старте сервера
-	fmt.Printf("Server start")
-	//вызываем функцию настройки и старта сервера
-	set_handle_func()
+type TemplateData struct {
+	Task     string
+	Solution string
 }
 
-func set_handle_func() {
+func main() {
+	var task string
+	if len(os.Args) > 1 {
+		task = os.Args[1]
+	} else {
+		task = ""
+	}
+	fmt.Printf("Server start with task = \"" + task + "\"")
+	setHandleFunc(task)
+}
+
+func setHandleFunc(task string) {
 	//создаём диспетчер путей
 	mux := http.NewServeMux()
 	//добавляем функцию обработчик главной страницы
-	mux.HandleFunc("/", home)
+	mux.HandleFunc("/", home(task))
 
 	// Инициализируем FileServer, он будет обрабатывать
 	// HTTP-запросы к статическим файлам из папки "./static".
@@ -33,33 +42,48 @@ func set_handle_func() {
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
 	//запускаем сервер на порту 8081
-	http.ListenAndServe(":8081", mux)
+	err := http.ListenAndServe(":8081", mux)
+	if err != nil {
+		return
+	}
 }
 
 // Обработчик главной страницы.
-func home(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		http.NotFound(w, r)
-		return
-	}
+func home(task string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/" {
+			http.NotFound(w, r)
+			return
+		}
 
-	// Используем функцию template.ParseFiles() для чтения файла шаблона.
-	// Если возникла ошибка, мы запишем детальное сообщение ошибки и
-	// используя функцию http.Error() мы отправим пользователю
-	// ответ: 500 Internal Server Error (Внутренняя ошибка на сервере)
-	ts, err := template.ParseFiles("./index.html")
-	if err != nil {
-		log.Println(err.Error())
-		http.Error(w, "Internal Server Error", 500)
-		return
-	}
+		// Используем функцию template.ParseFiles() для чтения файла шаблона.
+		// Если возникла ошибка, мы запишем детальное сообщение ошибки и
+		// используя функцию http.Error() мы отправим пользователю
+		// ответ: 500 Internal Server Error (Внутренняя ошибка на сервере)
+		ts, err := template.ParseFiles("./index.html")
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, "Internal Server Error", 500)
+			return
+		}
 
-	// Затем мы используем метод Execute() для записи содержимого
-	// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
-	// возможность отправки динамических данных в шаблон.
-	err = ts.Execute(w, nil)
-	if err != nil {
-		log.Println(err.Error())
-		http.Error(w, "Internal Server Error", 500)
+		// Затем мы используем метод Execute() для записи содержимого
+		// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
+		// возможность отправки динамических данных в шаблон.
+
+		data := TemplateData{
+			Task:     task,
+			Solution: getSolution(task),
+		}
+
+		err = ts.Execute(w, data)
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, "Internal Server Error", 500)
+		}
 	}
+}
+
+func getSolution(task string) string {
+	return ""
 }

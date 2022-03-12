@@ -175,7 +175,7 @@ class RubicGeometry {
 		this.angle += delta * THREE.Math.degToRad(360 * direction);
 		if (((direction == -1) && (this.angle >= THREE.Math.degToRad(-90))) ||
 		((direction == 1) && (this.angle <= THREE.Math.degToRad(90))) ||
-		((direction == 2) && (this.angle <= THREE.Math.degToRad(180)))) {
+		((direction == -2) && (this.angle >= THREE.Math.degToRad(-180)))) {
 			switch (axis) {
 			case "x":
 				this.helper.rotation.x = this.angle;
@@ -193,13 +193,13 @@ class RubicGeometry {
 			//return false;
 		} else {
 			this.angle = 0;
-			console.info("del="+this.delta+"; id="+this.geom[0][0][0].box.id+"; pos="+this.geom[0][0][0].box.matrixWorld.elements.map(Math.round));
-			let newM = new THREE.Matrix4();
-			newM.copy(this.geom[0][0][0].box.matrixWorld);
+			//console.info("del="+this.delta+"; id="+this.geom[0][0][0].box.id+"; pos="+this.geom[0][0][0].box.matrixWorld.elements.map(Math.round));
+			//let newM = new THREE.Matrix4();
+			//newM.copy(this.geom[0][0][0].box.matrixWorld);
 			this.ungroupFromPivot(axis, segment, direction);
 			this.recombination(axis,segment,direction);
 			this.setPositionBox();
-			this.geom[0][0][0].box.matrixWorld.copy(newM);
+			//this.geom[0][0][0].box.matrixWorld.copy(newM);
 			
 			//return true;
 			closure();
@@ -239,7 +239,7 @@ class RubicGeometry {
 			switch (direction) {
 			case -1:
 				this.recombinationX(seg);
-			case 2:
+			case -2:
 				this.recombinationX(seg);
 			case 1:
 				this.recombinationX(seg);
@@ -249,7 +249,7 @@ class RubicGeometry {
 			switch (direction) {
 			case -1:
 				this.recombinationY(seg);
-			case 2:
+			case -2:
 				this.recombinationY(seg);
 			case 1:
 				this.recombinationY(seg);
@@ -259,7 +259,7 @@ class RubicGeometry {
 			switch (direction) {
 			case -1:
 				this.recombinationZ(seg);
-			case 2:
+			case -2:
 				this.recombinationZ(seg);
 			case 1:
 				this.recombinationZ(seg);
@@ -415,30 +415,4 @@ function createRubicBox(x,y,z,size, delta) {
 	return (new RubicBox(x, y, z, delta, boxType, side));
 }
 
-//*/
-function addGeometry(size){
-	var centerPivot = new THREE.Object3D;
-
-	var cubeMaterial = createCubeMaterial(BoxType.EdgeRight, Side.Top);
-	var cubeGeometry = new THREE.CubeGeometry( 0.99, 0.99, 0.99 );
-
-	var delta = size / 2
-
-	var x = -delta
-	while (x < delta) {
-		var y = -delta
-		while (y < delta) {
-			var z = -delta
-			while (z < delta) {
-				var c = new THREE.Mesh( cubeGeometry, cubeMaterial)
-				centerPivot.add(c)
-				c.position.set(x + 0.5, y + 0.5, z + 0.5)
-				z += 1
-			}
-			y += 1
-		}
-		x += 1
-	}   
-	return centerPivot
-}
 

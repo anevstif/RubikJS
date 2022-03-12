@@ -1,5 +1,5 @@
 class Rubic {
-	constructor(strCommand, size) {
+	constructor(taskCommand, size) {
 		this.keyStatus = "start";
 		this.axisRotation = "";
 		this.segmentRotation = 0;
@@ -7,56 +7,7 @@ class Rubic {
 		this.size = parseInt(size) || 3;
 		this.geom = new RubicGeometry(this.size);
 		this.world = new World(this.size, this.geom.getGeom());
-		this.command = (strCommand) ? strCommand.split('%20') : [];
-		document.addEventListener("keyup", keyListener, false);
-	}
-}
-
-function keyListener(keyDesc) {
-	switch (r.keyStatus) {
-	case "start":
-		let size = parseInt(keyDesc.key) || 0;
-		if ((size > 1) && (size < 10)) {
-			r.size = size;
-			r.geom = new RubicGeometry(size);
-			r.world.remup(size, r.geom.getGeom());
-		}
-		if ((keyDesc.key == "x") || (keyDesc.key == "y") || (keyDesc.key == "z")) {
-			r.axisRotation = keyDesc.key;
-			r.keyStatus = "axis";
-		} else {
-			r.keyStatus = "start";
-		}
-		break;
-	case "axis":
-		pos = parseInt(keyDesc.key);
-		if ((pos != NaN) && (pos >= 0) && (pos < r.size)) {
-			r.segmentRotation = pos;
-			r.keyStatus = "rotation";
-		} else {
-			r.keyStatus = "start";
-		}
-		break;
-	case "rotation":
-		switch (keyDesc.key) {
-		case "+":
-			r.directionRotation = 1;
-			r.keyStatus = "direction";
-			r.geom.groupToPivot(r.axisRotation, r.segmentRotation);
-			break;
-		case "-":
-			r.directionRotation = -1;
-			r.keyStatus = "direction";
-			r.geom.groupToPivot(r.axisRotation, r.segmentRotation);
-			break;
-		case "2":
-			r.directionRotation = 2;
-			r.keyStatus = "direction";
-			r.geom.groupToPivot(r.axisRotation, r.segmentRotation);
-			break;
-		default:
-			r.keyStatus = "start";		
-		}
+		this.command = (taskCommand) ? taskCommand.split(' ') : [];
 	}
 }
 
@@ -78,7 +29,7 @@ function animate()
 
 function setToMove() {
 	let item = r.command.shift().trim() + " ";
-	console.info(item);
+	//console.info(item);
 	switch(item[0]) {
 	case "U":
 		r.axisRotation = "y";
@@ -106,9 +57,9 @@ function setToMove() {
 		break;
 	}
 
-	console.info((item.substring(1)==="%27"));
+	//console.info((item.substring(1)==="%27"));
 	let v = String(item.substring(1));
-	console.info("["+(v[3])+"]");
+	//console.info("["+(v[3])+"]");
 	switch(v) {
 	case " ":
 		r.directionRotation = -1;
@@ -121,7 +72,7 @@ function setToMove() {
 			r.directionRotation = 1;
 			break;
 	case "2 ":
-		r.directionRotation = 2;
+		r.directionRotation = -2;
 		break;
 	default:
 		r.directionRotation = 1;
@@ -130,12 +81,10 @@ function setToMove() {
 	r.keyStatus = "direction";
 }
 
-function getGETParam(name) {
-    var s = window.location.search;
-    s = s.match(new RegExp(name + '=([^&=]+)'));
-    return s ? s[1] : false;
+taskCommand = ""
+elem = document.getElementById("task");
+if (elem != null) {
+	taskCommand = elem.innerHTML;
 }
-
-startCommand = getGETParam('start')
-var r = new Rubic(startCommand);
+var r = new Rubic(taskCommand);
 animate();

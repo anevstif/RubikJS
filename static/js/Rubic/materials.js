@@ -1,16 +1,16 @@
-const nullMaterial = new THREE.MeshPhongMaterial( { color:0x333333 } ); //чёрный
-const topMaterial = new THREE.MeshPhongMaterial( { color: 0xff0000 } ); //красный
-const leftMaterial = new THREE.MeshPhongMaterial( { color: 0xff88ff } ); //розовый
-const rightMaterial = new THREE.MeshPhongMaterial( { color: 0xffff00 } ); //жёлтый
-const frontMaterial = new THREE.MeshPhongMaterial( { color: 0x00ff00 } ); //зеленый
-const backMaterial = new THREE.MeshPhongMaterial( { color: 0x0000ff } ); //синий
-const bottomMaterial = new THREE.MeshPhongMaterial( { color: 0x88ffff } ); //голубой
 
-
+const normMap = THREE.ImageUtils.loadTexture( 'static/images/normal.png' );
+const nullMaterial = new THREE.MeshPhongMaterial( { map: THREE.ImageUtils.loadTexture( 'static/images/inner.png' ) });
+const topMaterial = new THREE.MeshPhongMaterial( { map: THREE.ImageUtils.loadTexture( 'static/images/up.png' ), normalMap: normMap });
+const leftMaterial = new THREE.MeshPhongMaterial( { map: THREE.ImageUtils.loadTexture( 'static/images/left.png' ), normalMap: normMap  });
+const rightMaterial = new THREE.MeshPhongMaterial( { map: THREE.ImageUtils.loadTexture( 'static/images/right.png' ), normalMap: normMap  });
+const frontMaterial = new THREE.MeshPhongMaterial( { map: THREE.ImageUtils.loadTexture( 'static/images/front.png' ), normalMap: normMap  });
+const backMaterial = new THREE.MeshPhongMaterial( { map: THREE.ImageUtils.loadTexture( 'static/images/back.png' ), normalMap: normMap  });
+const bottomMaterial = new THREE.MeshPhongMaterial( { map: THREE.ImageUtils.loadTexture( 'static/images/down.png' ), normalMap: normMap  });
 
 
 function createCubeMaterial(boxType, side) {
-    	// Create an array of materials to be used in a cube, one for each side
+    // Create an array of materials to be used in a cube, one for each side
 	var cubeMaterialArray = [];
 	// order to add materials: x+,x-,y+,y-,z+,z-
     cubeMaterialArray.push( nullMaterial );
@@ -22,7 +22,6 @@ function createCubeMaterial(boxType, side) {
 
     switch (side) {
         case Side.Top:
-            //console.warn("top");
             cubeMaterialArray[2] = topMaterial;
             switch (boxType) {
                 case BoxType.EdgeTop:
@@ -55,7 +54,6 @@ function createCubeMaterial(boxType, side) {
             }
             break;
         case Side.Left:
-            //console.warn("left");
             cubeMaterialArray[2] = leftMaterial;
             switch (boxType) {
                 case BoxType.EdgeTop:
@@ -88,7 +86,6 @@ function createCubeMaterial(boxType, side) {
             }
             break;
         case Side.Right:
-            //console.warn("right");
             cubeMaterialArray[2] = rightMaterial;
             switch (boxType) {
                 case BoxType.EdgeTop:
@@ -121,7 +118,6 @@ function createCubeMaterial(boxType, side) {
             }
             break;
         case Side.Front:
-            //console.warn("front");
             cubeMaterialArray[2] = frontMaterial;
             switch (boxType) {
                 case BoxType.EdgeTop:
@@ -154,7 +150,6 @@ function createCubeMaterial(boxType, side) {
             }
             break;
         case Side.Back:
-            //console.warn("back");
             cubeMaterialArray[2] = backMaterial;
             switch (boxType) {
                 case BoxType.EdgeTop:
@@ -187,7 +182,6 @@ function createCubeMaterial(boxType, side) {
             }
             break;
         case Side.Bottom:
-            //console.warn("bottom");
             cubeMaterialArray[2] = bottomMaterial;
             switch (boxType) {
                 case BoxType.EdgeTop:
@@ -219,15 +213,7 @@ function createCubeMaterial(boxType, side) {
                     cubeMaterialArray[0] = leftMaterial;
             }
     }
-     
-/*
-	cubeMaterialArray.push( rightMaterial );
-	cubeMaterialArray.push( leftMaterial );
-	cubeMaterialArray.push( topMaterial );
-	cubeMaterialArray.push( bottomMaterial );
-	cubeMaterialArray.push( frontMaterial );
-	cubeMaterialArray.push( backMaterial );
-*/
+
     var cubeMaterials = new THREE.MeshFaceMaterial( cubeMaterialArray );
     return cubeMaterials
 }
