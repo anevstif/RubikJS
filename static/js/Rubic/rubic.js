@@ -99,6 +99,24 @@ function spdInp() {
 	r.speed = document.getElementById("speed").value;
 }
 
+function slvBtn() {
+$(document).ready(function (){
+    $.ajax({
+      url: '/ajax',
+      type: "post",
+      data: "Lorem ipsum dolor sit amet, ",
+      dataType: 'html',
+      beforeSend: function() {
+        console.info("loading...");
+      },
+      success: afterSend
+    });
+  });
+}
+function afterSend(result) {
+    console.info("result:" + result);
+};
+
 taskCommand = ""
 elem = document.getElementById("task");
 if (elem != null) {

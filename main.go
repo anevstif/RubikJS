@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+    "io/ioutil"
 )
 
 type TemplateData struct {
@@ -20,15 +21,32 @@ func main() {
 	} else {
 		task = ""
 	}
-	fmt.Printf("Server start with task = \"" + task + "\"")
+	fmt.Printf("Server start with task = \"" + task + "\"\n")
 	setHandleFunc(task)
 }
+
+// AJAX Request Handler
+func ajaxHandler(w http.ResponseWriter, r *http.Request) {
+    //*
+	data, err := ioutil.ReadAll(r.Body);
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+	fmt.Printf("ajax data: [% s]\n", string(data))
+    w.Write(data)
+    w.Write([]byte("consectetur adipisicing elit."))
+}
+
+
 
 func setHandleFunc(task string) {
 	//создаём диспетчер путей
 	mux := http.NewServeMux()
 	//добавляем функцию обработчик главной страницы
 	mux.HandleFunc("/", home(task))
+
+	mux.HandleFunc("/ajax", ajaxHandler)
 
 	// Инициализируем FileServer, он будет обрабатывать
 	// HTTP-запросы к статическим файлам из папки "./static".
