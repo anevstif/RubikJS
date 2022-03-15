@@ -173,9 +173,10 @@ class RubicGeometry {
 
 	rotateGeom(axis,segment,direction,delta, closure) {
 		this.angle += delta * THREE.Math.degToRad(360 * direction);
-		if (((direction == -1) && (this.angle >= THREE.Math.degToRad(-90))) ||
-		((direction == 1) && (this.angle <= THREE.Math.degToRad(90))) ||
-		((direction == -2) && (this.angle >= THREE.Math.degToRad(-180)))) {
+		if (((direction == -1) && (this.angle > THREE.Math.degToRad(-90))) ||
+		((direction == 1) && (this.angle < THREE.Math.degToRad(90))) ||
+		((direction == -2) && (this.angle > THREE.Math.degToRad(-180))) ||
+		((direction == 2) && (this.angle < THREE.Math.degToRad(180)))) {
 			switch (axis) {
 			case "x":
 				this.helper.rotation.x = this.angle;
@@ -240,6 +241,7 @@ class RubicGeometry {
 			case -1:
 				this.recombinationX(seg);
 			case -2:
+			case 2:
 				this.recombinationX(seg);
 			case 1:
 				this.recombinationX(seg);
@@ -250,6 +252,7 @@ class RubicGeometry {
 			case -1:
 				this.recombinationY(seg);
 			case -2:
+			case 2:
 				this.recombinationY(seg);
 			case 1:
 				this.recombinationY(seg);
@@ -260,6 +263,7 @@ class RubicGeometry {
 			case -1:
 				this.recombinationZ(seg);
 			case -2:
+			case 2:
 				this.recombinationZ(seg);
 			case 1:
 				this.recombinationZ(seg);

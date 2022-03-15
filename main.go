@@ -85,5 +85,5 @@ func home(task string) http.HandlerFunc {
 }
 
 func getSolution(task string) string {
-	return ""
+	return "L2 D'"
 }

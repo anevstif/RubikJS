@@ -1,22 +1,20 @@
 class Rubic {
 	constructor(taskCommand, size) {
-		this.keyStatus = "start";
+		this.keyStatus = "none";
 		this.axisRotation = "";
 		this.segmentRotation = 0;
 		this.directionRotation = 0;
 		this.size = parseInt(size) || 3;
 		this.geom = new RubicGeometry(this.size);
 		this.world = new World(this.size, this.geom.getGeom());
+		this.speed = 1;
 		this.command = (taskCommand) ? taskCommand.split(' ') : [];
 	}
 }
 
 function animate() 
 {
-	
-	
-	let deltasec = r.world.update();
-	//console.info(parseFloat(deltasec * 1000.0)+"sec");
+	let deltasec = r.world.update() * r.speed;
 	if (r.keyStatus == "direction") {
 		r.geom.rotateGeom(r.axisRotation, r.segmentRotation, r.directionRotation, deltasec, function() {
 			r.keyStatus = "start";});
@@ -29,7 +27,7 @@ function animate()
 
 function setToMove() {
 	let item = r.command.shift().trim() + " ";
-	//console.info(item);
+	var backSide = false;
 	switch(item[0]) {
 	case "U":
 		r.axisRotation = "y";
@@ -38,6 +36,7 @@ function setToMove() {
 	case "D":
 		r.axisRotation = "y";
 		r.segmentRotation = 0;
+		backSide = true;
 		break;
 	case "R":
 		r.axisRotation = "x";
@@ -46,6 +45,7 @@ function setToMove() {
 	case "L":
 		r.axisRotation = "x";
 		r.segmentRotation = 0;
+		backSide = true;
 		break;
 	case "F":
 		r.axisRotation = "z";
@@ -54,31 +54,49 @@ function setToMove() {
 	case "B":
 		r.axisRotation = "z";
 		r.segmentRotation = 0;
+		backSide = true;
 		break;
 	}
 
-	//console.info((item.substring(1)==="%27"));
 	let v = String(item.substring(1));
-	//console.info("["+(v[3])+"]");
 	switch(v) {
 	case " ":
-		r.directionRotation = -1;
-		break;
-	case "' ":
-		r.directionRotation = 1;
-		break;
-	case "%27 ", "%27":
-			console.info("OK");
+		if (backSide) {
 			r.directionRotation = 1;
-			break;
+		} else {
+			r.directionRotation = -1;
+		} break;
+	case "'":
+	case "' ":
+	case "'":
+	case "%27":
+	case "%27 ":
+		if (backSide) {
+			r.directionRotation = -1;
+		} else {
+			r.directionRotation = 1;
+		} break;
 	case "2 ":
-		r.directionRotation = -2;
-		break;
-	default:
-		r.directionRotation = 1;
+		if (backSide) {
+			r.directionRotation = 2;
+		} else {
+			r.directionRotation = -2;
+		} break;
 	}
 	r.geom.groupToPivot(r.axisRotation, r.segmentRotation);
 	r.keyStatus = "direction";
+}
+
+function btnClick() {
+	taskCommand = document.getElementById("task").value;
+	r.command = (taskCommand) ? taskCommand.split(' ') : [];
+	r.geom = new RubicGeometry(r.size);
+	r.world.remup(r.size, r.geom.getGeom());
+	r.keyStatus = "start";
+}
+
+function spdInp() {
+	r.speed = document.getElementById("speed").value;
 }
 
 taskCommand = ""
