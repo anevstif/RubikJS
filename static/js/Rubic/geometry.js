@@ -171,7 +171,7 @@ class RubicGeometry {
 		}
 	}
 
-	rotateGeom(axis,segment,direction,delta, closure) {
+	rotateGeom(axis,segment,direction,delta){//, closure) {
 		this.angle += delta * THREE.Math.degToRad(360 * direction);
 		if (((direction == -1) && (this.angle > THREE.Math.degToRad(-90))) ||
 		((direction == 1) && (this.angle < THREE.Math.degToRad(90))) ||
@@ -191,7 +191,7 @@ class RubicGeometry {
 				//this.helper.rotation.fromArray((new THREE.Vector3(0,0,1)).multiplyScalar(this.angle).toArray());
 				this.helper.rotation.z = this.angle;
 			}
-			//return false;
+			return false;
 		} else {
 			this.angle = 0;
 			//console.info("del="+this.delta+"; id="+this.geom[0][0][0].box.id+"; pos="+this.geom[0][0][0].box.matrixWorld.elements.map(Math.round));
@@ -202,8 +202,8 @@ class RubicGeometry {
 			this.setPositionBox();
 			//this.geom[0][0][0].box.matrixWorld.copy(newM);
 			
-			//return true;
-			closure();
+			return true;
+			//closure();
 		}
 	}
 

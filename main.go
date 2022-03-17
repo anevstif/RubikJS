@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 type TemplateData struct {
@@ -18,7 +19,7 @@ type TemplateData struct {
 func main() {
 	var task string
 	if len(os.Args) > 1 {
-		task = os.Args[1]
+		task = os.Args[1] //
 	} else {
 		task = ""
 	}
@@ -27,7 +28,9 @@ func main() {
 }
 
 func fromPy(task string) string {
-	cmd := exec.Command("python", "-c", "import pyfile; pyfile.cat_strings('"+task+"');")
+	cmd := exec.Command("python",
+		"-c",
+		"import pyfile; pyfile.solver('"+strings.Replace(task, "'", "\\'", -1)+"');")
 	out, err := cmd.Output()
 	if err != nil {
 		fmt.Println(err)
@@ -37,18 +40,16 @@ func fromPy(task string) string {
 
 // AJAX Request Handler
 func ajaxHandler(w http.ResponseWriter, r *http.Request) {
-    //*
+	//*
 	data, err := ioutil.ReadAll(r.Body)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	fmt.Printf("ajax data: [% s]\n", string(data))
-    w.Write(data)
-    w.Write([]byte("consectetur adipisicing elit."))
+	w.Write(data)
+	w.Write([]byte("consectetur adipisicing elit."))
 }
-
-
 
 func setHandleFunc(task string) {
 	//создаём диспетчер путей

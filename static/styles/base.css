@@ -7,7 +7,6 @@ body
 	overflow: hidden;
 }
 
-
 #scene-container {
 	/* tell our scene container to take up the full page */
 	position: absolute;
@@ -23,3 +22,8 @@ body
 	*/
 	background-color: skyblue; 
   }
+
+#form {
+	position: absolute;
+	z-index: 90;
+}

@@ -1,126 +1,130 @@
 class Rubic {
-	constructor(taskCommand, size) {
+	constructor(size) {
+		this.size = parseInt(size) || 3;
+		this.taskCommands = [];
+		this.solverCommands = [];
+		this.currentTaskIndex = 0;
+		this.currentSolverIndex = 0;
+		this.updateTaskSolver()
 		this.keyStatus = "none";
 		this.axisRotation = "";
 		this.segmentRotation = 0;
 		this.directionRotation = 0;
-		this.size = parseInt(size) || 3;
 		this.geom = new RubicGeometry(this.size);
 		this.world = new World(this.size, this.geom.getGeom());
 		this.speed = 1;
-		this.command = (taskCommand) ? taskCommand.split(' ') : [];
-	}
-}
-
-function animate() 
-{
-	let deltasec = r.world.update() * r.speed;
-	if (r.keyStatus == "direction") {
-		r.geom.rotateGeom(r.axisRotation, r.segmentRotation, r.directionRotation, deltasec, function() {
-			r.keyStatus = "start";});
-	} else if ((r.command.length > 0) && (r.keyStatus == "start")) {
-		setToMove();
-	}
-	r.world.render();
-	requestAnimationFrame( animate );
-}
-
-function setToMove() {
-	let item = r.command.shift().trim() + " ";
-	var backSide = false;
-	switch(item[0]) {
-	case "U":
-		r.axisRotation = "y";
-		r.segmentRotation = r.size - 1;
-		break;
-	case "D":
-		r.axisRotation = "y";
-		r.segmentRotation = 0;
-		backSide = true;
-		break;
-	case "R":
-		r.axisRotation = "x";
-		r.segmentRotation = r.size - 1;
-		break;
-	case "L":
-		r.axisRotation = "x";
-		r.segmentRotation = 0;
-		backSide = true;
-		break;
-	case "F":
-		r.axisRotation = "z";
-		r.segmentRotation = r.size - 1;
-		break;
-	case "B":
-		r.axisRotation = "z";
-		r.segmentRotation = 0;
-		backSide = true;
-		break;
 	}
 
-	let v = String(item.substring(1));
-	switch(v) {
-	case " ":
-		if (backSide) {
-			r.directionRotation = 1;
-		} else {
-			r.directionRotation = -1;
-		} break;
-	case "'":
-	case "' ":
-	case "'":
-	case "%27":
-	case "%27 ":
-		if (backSide) {
-			r.directionRotation = -1;
-		} else {
-			r.directionRotation = 1;
-		} break;
-	case "2 ":
-		if (backSide) {
-			r.directionRotation = 2;
-		} else {
-			r.directionRotation = -2;
-		} break;
+	updateTaskSolver() {
+		let elem  = getTaskSolver();
+		this.taskCommands = elem.task;
+		this.solverCommands = elem.solver;
+		this.currentTaskIndex = 0;
+		this.currentSolverIndex = 0;
 	}
-	r.geom.groupToPivot(r.axisRotation, r.segmentRotation);
-	r.keyStatus = "direction";
-}
 
-function btnClick() {
-	taskCommand = document.getElementById("task").value;
-	r.command = (taskCommand) ? taskCommand.split(' ') : [];
-	r.geom = new RubicGeometry(r.size);
-	r.world.remup(r.size, r.geom.getGeom());
-	r.keyStatus = "start";
-}
+	setToMove() {
+		if (this.keyStatus == "startTask") {
+			this.setToMoveCommand(this.taskCommands[this.currentTaskIndex])
+			this.keyStatus = "startRotate";
+			this.currentTaskIndex += 1;
+			if (this.currentTaskIndex > this.taskCommands.length){
+				this.keyStatus = "endTask";
+				this.currentTaskIndex = 0;
+			}
+		}
+		if (this.keyStatus == "startSolver") {
+			this.setToMoveCommand(this.solverCommands[this.currentSolverIndex])
+			this.keyStatus = "solverRotate";
+			this.currentSolverIndex += 1;
+			if (this.currentSolverIndex > this.solverCommands.length){
+				this.keyStatus = "none";
+				this.currentSolverIndex = 0;
+			}
+		}
+	}
 
-function spdInp() {
-	r.speed = document.getElementById("speed").value;
-}
+	setToMoveCommand(command) {
+		let item = command + " ";
+		var backSide = false;
+		switch(item[0]) {
+			case "U":
+				this.axisRotation = "y";
+				this.segmentRotation = this.size - 1;
+				break;
+			case "D":
+				this.axisRotation = "y";
+				this.segmentRotation = 0;
+				backSide = true;
+				break;
+			case "R":
+				this.axisRotation = "x";
+				this.segmentRotation = this.size - 1;
+				break;
+			case "L":
+				this.axisRotation = "x";
+				this.segmentRotation = 0;
+				backSide = true;
+				break;
+			case "F":
+				this.axisRotation = "z";
+				this.segmentRotation = this.size - 1;
+				break;
+			case "B":
+				this.axisRotation = "z";
+				this.segmentRotation = 0;
+				backSide = true;
+				break;
+		}
 
-function slvBtn() {
-$(document).ready(function (){
-    $.ajax({
-      url: '/ajax',
-      type: "post",
-      data: "Ajax data",
-      dataType: 'html',
-      beforeSend: function() {
-        console.info("loading...");
-      },
-      success: afterSend
-    });
-  });
-}
-function afterSend(result) {
-    console.info("result:" + result);
-};
+		let v = String(item.substring(1));
+		switch(v) {
+			case " ":
+				if (backSide) {
+					this.directionRotation = 1;
+				} else {
+					this.directionRotation = -1;
+				} break;
+			case "'":
+			case "' ":
+			case "'":
+			case "%27":
+			case "%27 ":
+				if (backSide) {
+					this.directionRotation = -1;
+				} else {
+					this.directionRotation = 1;
+				} break;
+			case "2 ":
+				if (backSide) {
+					this.directionRotation = 2;
+				} else {
+					this.directionRotation = -2;
+				} break;
+		}
+		this.geom.groupToPivot(this.axisRotation, this.segmentRotation);
+	}
 
-taskCommand = ""
-elem = document.getElementById("task");
-if (elem != null) {
-	taskCommand = elem.innerHTML;
+	update() {
+		let deltasec = this.world.update() * this.speed;
+		if ((this.keyStatus == "startRotate") || (this.keyStatus == "solverRotate")) {
+			if (this.geom.rotateGeom(
+				this.axisRotation,
+				this.segmentRotation,
+				this.directionRotation,
+				deltasec)
+			) {
+				//function() {
+				if (this.keyStatus == "startRotate") {
+					this.keyStatus = "startTask";
+				} else if (this.keyStatus == "solverRotate") {
+					this.keyStatus = "startSolver";
+				}
+			}
+			//});
+		} else if ((this.keyStatus == "startTask") || (this.keyStatus == "startSolver")) {
+			this.setToMove();
+		}
+		this.world.render();
+	}
 }
-var r = new Rubic(taskCommand);
-animate();
