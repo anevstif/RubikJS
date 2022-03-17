@@ -3,10 +3,11 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
-    "io/ioutil"
+	"os/exec"
 )
 
 type TemplateData struct {
@@ -25,10 +26,19 @@ func main() {
 	setHandleFunc(task)
 }
 
+func fromPy(task string) string {
+	cmd := exec.Command("python", "-c", "import pyfile; pyfile.cat_strings('"+task+"');")
+	out, err := cmd.Output()
+	if err != nil {
+		fmt.Println(err)
+	}
+	return (string(out))
+}
+
 // AJAX Request Handler
 func ajaxHandler(w http.ResponseWriter, r *http.Request) {
     //*
-	data, err := ioutil.ReadAll(r.Body);
+	data, err := ioutil.ReadAll(r.Body)
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
@@ -45,7 +55,6 @@ func setHandleFunc(task string) {
 	mux := http.NewServeMux()
 	//добавляем функцию обработчик главной страницы
 	mux.HandleFunc("/", home(task))
-
 	mux.HandleFunc("/ajax", ajaxHandler)
 
 	// Инициализируем FileServer, он будет обрабатывать
@@ -103,5 +112,5 @@ func home(task string) http.HandlerFunc {
 }
 
 func getSolution(task string) string {
-	return "L2 D'"
+	return fromPy(task)
 }

@@ -104,7 +104,7 @@ $(document).ready(function (){
     $.ajax({
       url: '/ajax',
       type: "post",
-      data: "Lorem ipsum dolor sit amet, ",
+      data: "Ajax data",
       dataType: 'html',
       beforeSend: function() {
         console.info("loading...");
