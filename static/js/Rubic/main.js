@@ -1,38 +1,46 @@
-function getTaskSolver() {
+/*
+    ==================================================================
+    functions get elements task and solver in form from server or user
+ */
+function getTask() {
     let elem = document.getElementById("task");
     let taskCommand;
     if (elem != null) {
-        taskCommand = elem.innerHTML;
-    }
-    let solverCommand;
-    elem = document.getElementById("solver");
-    if (elem != null) {
-        solverCommand = elem.innerHTML;
+        taskCommand = elem.value;
     }
     let taskCommands = (taskCommand) ? taskCommand.split(' ') : [];
-    let solverCommands = (solverCommand) ? solverCommand.split(' ') : [];
-    return {task: taskCommands, solver: solverCommands}
+    return taskCommands
 }
 
+function getSolver() {
+    let elem = document.getElementById("solver");
+    let solverCommand;
+    if (elem != null) {
+        solverCommand = elem.value;
+    }
+    let solverCommands = (solverCommand) ? solverCommand.split(' ') : [];
+    return solverCommands
+}
+
+/*
+=================
+    infinite loop
+ */
 function animate()
 {
     r.update();
     requestAnimationFrame( animate );
 }
 
-function startClick() {
-    r.updateTaskSolver();
-    r.geom = new RubicGeometry(r.size);
-    r.world.remup(r.size, r.geom.getGeom());
-    r.keyStatus = "startTask";
+/*
+    ==============
+    ajax functions
+ */
+function afterSend(result) {
+    console.info("result:" + result);
 }
 
-function spdInp() {
-    r.speed = document.getElementById("speed").value;
-}
-
-function solverClick() {
-    r.keyStatus = "startSolver";
+function ajaxRequest() {
     $(document).ready(function (){
         $.ajax({
             url: '/ajax',
@@ -46,9 +54,37 @@ function solverClick() {
         });
     });
 }
-function afterSend(result) {
-    console.info("result:" + result);
+
+/*
+    ============================
+    listeners from form elements
+ */
+function startClick() {
+    if (r.keyStatus != "none") {
+        return;
+    }
+    r.updateTask(getTask());
+    r.geom = new RubicGeometry(r.size);
+    r.world.remup(r.size, r.geom.getGeom());
+    r.keyStatus = "prepareTask";
 }
 
+function solverClick() {
+    if (r.keyStatus != "endTask") {
+        return;
+    }
+    r.updateSolver(getSolver());
+    r.keyStatus = "prepareSolver";
+    ajaxRequest();
+}
+
+function spdInp() {
+    r.speed = document.getElementById("speed").value;
+}
+
+/*
+    =======
+    program
+ */
 var r = new Rubic();
 animate();

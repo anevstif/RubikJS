@@ -1,11 +1,10 @@
 class Rubic {
-	constructor(size) {
+	constructor(size = 3) {
 		this.size = parseInt(size) || 3;
 		this.taskCommands = [];
 		this.solverCommands = [];
 		this.currentTaskIndex = 0;
 		this.currentSolverIndex = 0;
-		this.updateTaskSolver()
 		this.keyStatus = "none";
 		this.axisRotation = "";
 		this.segmentRotation = 0;
@@ -15,36 +14,39 @@ class Rubic {
 		this.speed = 1;
 	}
 
-	updateTaskSolver() {
-		let elem  = getTaskSolver();
-		this.taskCommands = elem.task;
-		this.solverCommands = elem.solver;
+	updateTask(commands) {
+		this.taskCommands = commands;
 		this.currentTaskIndex = 0;
+	}
+
+	updateSolver(commands) {
+		this.solverCommands = commands;
 		this.currentSolverIndex = 0;
 	}
 
-	setToMove() {
-		if (this.keyStatus == "startTask") {
-			this.setToMoveCommand(this.taskCommands[this.currentTaskIndex])
-			this.keyStatus = "startRotate";
-			this.currentTaskIndex += 1;
-			if (this.currentTaskIndex > this.taskCommands.length){
-				this.keyStatus = "endTask";
-				this.currentTaskIndex = 0;
-			}
+	prepareTaskToMove() {
+		if (this.currentTaskIndex >= this.taskCommands.length){
+			this.keyStatus = "endTask";
+			return;
 		}
-		if (this.keyStatus == "startSolver") {
-			this.setToMoveCommand(this.solverCommands[this.currentSolverIndex])
-			this.keyStatus = "solverRotate";
-			this.currentSolverIndex += 1;
-			if (this.currentSolverIndex > this.solverCommands.length){
-				this.keyStatus = "none";
-				this.currentSolverIndex = 0;
-			}
-		}
+		this.prepareToMoveCommand(this.taskCommands[this.currentTaskIndex])
+		this.keyStatus = "taskRotate";
+		this.currentTaskIndex += 1;
+
 	}
 
-	setToMoveCommand(command) {
+	prepareSolverToMove() {
+		if (this.currentSolverIndex >= this.solverCommands.length){
+			this.keyStatus = "none";
+			return
+		}
+		this.prepareToMoveCommand(this.solverCommands[this.currentSolverIndex])
+		this.keyStatus = "solverRotate";
+		this.currentSolverIndex += 1;
+	}
+
+
+	prepareToMoveCommand(command) {
 		let item = command + " ";
 		var backSide = false;
 		switch(item[0]) {
@@ -78,24 +80,21 @@ class Rubic {
 		}
 
 		let v = String(item.substring(1));
-		switch(v) {
+		switch(v[0]) {
 			case " ":
+			case "\n":
 				if (backSide) {
 					this.directionRotation = 1;
 				} else {
 					this.directionRotation = -1;
 				} break;
 			case "'":
-			case "' ":
-			case "'":
-			case "%27":
-			case "%27 ":
 				if (backSide) {
 					this.directionRotation = -1;
 				} else {
 					this.directionRotation = 1;
 				} break;
-			case "2 ":
+			case "2":
 				if (backSide) {
 					this.directionRotation = 2;
 				} else {
@@ -107,23 +106,26 @@ class Rubic {
 
 	update() {
 		let deltasec = this.world.update() * this.speed;
-		if ((this.keyStatus == "startRotate") || (this.keyStatus == "solverRotate")) {
-			if (this.geom.rotateGeom(
-				this.axisRotation,
-				this.segmentRotation,
-				this.directionRotation,
-				deltasec)
-			) {
-				//function() {
-				if (this.keyStatus == "startRotate") {
-					this.keyStatus = "startTask";
-				} else if (this.keyStatus == "solverRotate") {
-					this.keyStatus = "startSolver";
+		let rotateIsOver;
+		switch (this.keyStatus) {
+			case "taskRotate":
+				rotateIsOver = this.geom.rotateGeom(this.axisRotation, this.segmentRotation, this.directionRotation, deltasec);
+				if (rotateIsOver === true) {
+					this.keyStatus = "prepareTask";
 				}
-			}
-			//});
-		} else if ((this.keyStatus == "startTask") || (this.keyStatus == "startSolver")) {
-			this.setToMove();
+				break;
+			case "solverRotate":
+				rotateIsOver = this.geom.rotateGeom(this.axisRotation, this.segmentRotation, this.directionRotation, deltasec);
+				if (rotateIsOver === true) {
+					this.keyStatus = "prepareSolver";
+				}
+				break;
+			case "prepareTask":
+				this.prepareTaskToMove();
+				break;
+			case "prepareSolver":
+				this.prepareSolverToMove();
+				break;
 		}
 		this.world.render();
 	}

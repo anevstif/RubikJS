@@ -171,7 +171,7 @@ class RubicGeometry {
 		}
 	}
 
-	rotateGeom(axis,segment,direction,delta){//, closure) {
+	rotateGeom(axis,segment,direction,delta){
 		this.angle += delta * THREE.Math.degToRad(360 * direction);
 		if (((direction == -1) && (this.angle > THREE.Math.degToRad(-90))) ||
 		((direction == 1) && (this.angle < THREE.Math.degToRad(90))) ||
@@ -180,30 +180,21 @@ class RubicGeometry {
 			switch (axis) {
 			case "x":
 				this.helper.rotation.x = this.angle;
-				//let vec = vecX;//vectorAxis[axis];
-				//this.helper.rotation.fromArray(vecX.multiplyScalar(this.angle).toArray());
 				break;
 			case "y":
-				//this.helper.rotation.fromArray((new THREE.Vector3(0,1,0)).multiplyScalar(this.angle).toArray());
 				this.helper.rotation.y = this.angle;
 				break;
 			case "z":
-				//this.helper.rotation.fromArray((new THREE.Vector3(0,0,1)).multiplyScalar(this.angle).toArray());
 				this.helper.rotation.z = this.angle;
+				break;
 			}
 			return false;
 		} else {
 			this.angle = 0;
-			//console.info("del="+this.delta+"; id="+this.geom[0][0][0].box.id+"; pos="+this.geom[0][0][0].box.matrixWorld.elements.map(Math.round));
-			//let newM = new THREE.Matrix4();
-			//newM.copy(this.geom[0][0][0].box.matrixWorld);
 			this.ungroupFromPivot(axis, segment, direction);
 			this.recombination(axis,segment,direction);
 			this.setPositionBox();
-			//this.geom[0][0][0].box.matrixWorld.copy(newM);
-			
 			return true;
-			//closure();
 		}
 	}
 
