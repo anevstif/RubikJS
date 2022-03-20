@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"io/ioutil"
@@ -12,8 +13,8 @@ import (
 )
 
 type TemplateData struct {
-	Task     string
-	Solution string
+	Task     string `json:"task"`
+	Solution string `json:"solution"`
 }
 
 func main() {
@@ -46,9 +47,19 @@ func ajaxHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	fmt.Printf("ajax data: [% s]\n", string(data))
-	w.Write(data)
-	w.Write([]byte("consectetur adipisicing elit."))
+
+	solution := fromPy(string(data))
+	res := &TemplateData{
+		Task:     string(data),
+		Solution: solution,
+	}
+	a, err := json.Marshal(res)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	fmt.Printf("ajax data: \n -task: [%s]\n -solution: [%s]\n", string(data), solution)
+	w.Write(a)
+	//w.Write([]byte("consectetur adipisicing elit."))
 }
 
 func setHandleFunc(task string) {

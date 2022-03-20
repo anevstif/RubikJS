@@ -1,3 +1,12 @@
+const	r_keyStatus_none = 			0,
+		r_keyStatus_endTask = 		2,
+		r_keyStatus_taskRotate = 	3,
+		r_keyStatus_solverRotate = 	4,
+		r_keyStatus_prepareTask = 	5,
+		r_keyStatus_prepareSolver = 6;
+
+
+
 class Rubic {
 	constructor(size = 3) {
 		this.size = parseInt(size) || 3;
@@ -5,7 +14,7 @@ class Rubic {
 		this.solverCommands = [];
 		this.currentTaskIndex = 0;
 		this.currentSolverIndex = 0;
-		this.keyStatus = "none";
+		this.keyStatus = r_keyStatus_none;
 		this.axisRotation = "";
 		this.segmentRotation = 0;
 		this.directionRotation = 0;
@@ -26,22 +35,22 @@ class Rubic {
 
 	prepareTaskToMove() {
 		if (this.currentTaskIndex >= this.taskCommands.length){
-			this.keyStatus = "endTask";
+			this.keyStatus = r_keyStatus_endTask;
 			return;
 		}
 		this.prepareToMoveCommand(this.taskCommands[this.currentTaskIndex])
-		this.keyStatus = "taskRotate";
+		this.keyStatus = r_keyStatus_taskRotate;
 		this.currentTaskIndex += 1;
 
 	}
 
 	prepareSolverToMove() {
 		if (this.currentSolverIndex >= this.solverCommands.length){
-			this.keyStatus = "none";
+			this.keyStatus = r_keyStatus_none;
 			return
 		}
 		this.prepareToMoveCommand(this.solverCommands[this.currentSolverIndex])
-		this.keyStatus = "solverRotate";
+		this.keyStatus = r_keyStatus_solverRotate;
 		this.currentSolverIndex += 1;
 	}
 
@@ -108,22 +117,22 @@ class Rubic {
 		let deltasec = this.world.update() * this.speed;
 		let rotateIsOver;
 		switch (this.keyStatus) {
-			case "taskRotate":
+			case r_keyStatus_taskRotate:
 				rotateIsOver = this.geom.rotateGeom(this.axisRotation, this.segmentRotation, this.directionRotation, deltasec);
 				if (rotateIsOver === true) {
-					this.keyStatus = "prepareTask";
+					this.keyStatus = r_keyStatus_prepareTask;
 				}
 				break;
-			case "solverRotate":
+			case r_keyStatus_solverRotate:
 				rotateIsOver = this.geom.rotateGeom(this.axisRotation, this.segmentRotation, this.directionRotation, deltasec);
 				if (rotateIsOver === true) {
-					this.keyStatus = "prepareSolver";
+					this.keyStatus = r_keyStatus_prepareSolver;
 				}
 				break;
-			case "prepareTask":
+			case r_keyStatus_prepareTask:
 				this.prepareTaskToMove();
 				break;
-			case "prepareSolver":
+			case r_keyStatus_prepareSolver:
 				this.prepareSolverToMove();
 				break;
 		}

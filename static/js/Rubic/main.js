@@ -2,21 +2,34 @@
     ==================================================================
     functions get elements task and solver in form from server or user
  */
-function getTask() {
+function getTask(task) {
     let elem = document.getElementById("task");
     let taskCommand;
     if (elem != null) {
-        taskCommand = elem.value;
+        if (task) {
+            taskCommand = task;
+            elem.value = task;
+        } else {
+            taskCommand = elem.value;
+        }
     }
     let taskCommands = (taskCommand) ? taskCommand.split(' ') : [];
     return taskCommands
 }
 
-function getSolver() {
+function getSolver(solver) {
     let elem = document.getElementById("solver");
     let solverCommand;
     if (elem != null) {
-        solverCommand = elem.value;
+
+    }
+    if (elem != null) {
+        if (solver) {
+            solverCommand = solver;
+            elem.value = solver;
+        } else {
+            solverCommand = elem.value;
+        }
     }
     let solverCommands = (solverCommand) ? solverCommand.split(' ') : [];
     return solverCommands
@@ -37,15 +50,24 @@ function animate()
     ajax functions
  */
 function afterSend(result) {
-    console.info("result:" + result);
+    let jsonObj = JSON.parse(result, (key, value) => {
+        return value;
+    });
+    console.info("result:"+result+" task:" + jsonObj.task + "; solution:" + jsonObj.solution);
+    r.updateTask(getTask(jsonObj.task));
+    r.updateSolver(getSolver(jsonObj.solution));
+    r.geom = new RubicGeometry(r.size);
+    r.world.remup(r.size, r.geom.getGeom());
+    r.keyStatus = r_keyStatus_prepareTask;
 }
 
-function ajaxRequest() {
+function ajaxRequest(dataTask) {
+    console.info("start data:" + dataTask)
     $(document).ready(function (){
         $.ajax({
             url: '/ajax',
             type: "post",
-            data: "Ajax data",
+            data: dataTask,
             dataType: 'html',
             beforeSend: function() {
                 console.info("loading...");
@@ -60,22 +82,20 @@ function ajaxRequest() {
     listeners from form elements
  */
 function startClick() {
-    if (r.keyStatus != "none") {
+    if (r.keyStatus != r_keyStatus_none) {
         return;
     }
-    r.updateTask(getTask());
-    r.geom = new RubicGeometry(r.size);
-    r.world.remup(r.size, r.geom.getGeom());
-    r.keyStatus = "prepareTask";
+    let tasks = getTask().join(" ");
+    ajaxRequest(tasks);
 }
 
 function solverClick() {
-    if (r.keyStatus != "endTask") {
+    if (r.keyStatus != r_keyStatus_endTask) {
         return;
     }
     r.updateSolver(getSolver());
-    r.keyStatus = "prepareSolver";
-    ajaxRequest();
+    r.keyStatus = r_keyStatus_prepareSolver;
+
 }
 
 function spdInp() {
