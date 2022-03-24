@@ -29,9 +29,9 @@ func main() {
 }
 
 func fromPy(task string) string {
-	cmd := exec.Command("python",
+	cmd := exec.Command("python3",
 		"-c",
-		"import pyfile; pyfile.solver('"+strings.Replace(task, "'", "\\'", -1)+"');")
+		"from solver.pyfile import solver; solver('"+strings.Replace(task, "'", "\\'", -1)+"');")
 	out, err := cmd.Output()
 	if err != nil {
 		fmt.Println(err)
@@ -49,15 +49,16 @@ func ajaxHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	solution := fromPy(string(data))
+	sol := strings.Replace(solution, "\n", "", -1)
 	res := &TemplateData{
 		Task:     string(data),
-		Solution: solution,
+		Solution: sol,
 	}
 	a, err := json.Marshal(res)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	fmt.Printf("ajax data: \n -task: [%s]\n -solution: [%s]\n", string(data), solution)
+	fmt.Printf("ajax data: \n -task: [%s]\n -solution: [%s]\n", string(data), sol)
 	w.Write(a)
 	//w.Write([]byte("consectetur adipisicing elit."))
 }

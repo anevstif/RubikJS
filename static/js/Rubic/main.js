@@ -91,7 +91,7 @@ function startClick() {
 
 function solverClick() {
     if (r.keyStatus != r_keyStatus_endTask) {
-        return;
+        //return;
     }
     r.updateSolver(getSolver());
     r.keyStatus = r_keyStatus_prepareSolver;
