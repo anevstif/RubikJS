@@ -49,23 +49,19 @@ class cube_t:
 			A[C[2]] = A[C[1]]
 			A[C[1]] = A[C[0]]
 			A[C[0]] = tmp
-		def swap2(a, b):
-			t = a
-			a = b
-			b = t
-		count = (count % 4 + 4) & 3
+		#count = (count % 4 + 4) & 3
 		if count == 2:
 			C = corner_rotate_map[0][type.value]
-			swap2(self.cp[C[0]], self.cp[C[2]])
-			swap2(self.cp[C[1]], self.cp[C[3]])
-			swap2(self.co[C[0]], self.co[C[2]])
-			swap2(self.co[C[1]], self.co[C[3]])
+			self.cp[C[0]], self.cp[C[2]] = self.cp[C[2]], self.cp[C[0]]
+			self.cp[C[1]], self.cp[C[3]] = self.cp[C[3]], self.cp[C[1]]
+			self.co[C[0]], self.co[C[2]] = self.co[C[2]], self.co[C[0]]
+			self.co[C[1]], self.co[C[3]] = self.co[C[3]], self.co[C[1]]
 
 			E = edge_rotate_map[0][type.value]
-			swap2(self.ep[E[0]], self.ep[E[2]])
-			swap2(self.ep[E[1]], self.ep[E[3]])
-			swap2(self.eo[E[0]], self.eo[E[2]])
-			swap2(self.eo[E[1]], self.eo[E[3]])
+			self.ep[E[0]], self.ep[E[2]] = self.ep[E[2]], self.ep[E[0]]
+			self.ep[E[1]], self.ep[E[3]] = self.ep[E[3]], self.ep[E[1]]
+			self.eo[E[0]], self.eo[E[2]] = self.eo[E[2]], self.eo[E[0]]
+			self.eo[E[1]], self.eo[E[3]] = self.eo[E[3]], self.eo[E[1]]
 		else:
 			C = corner_rotate_map[count >> 1][type.value]
 			swap(self.cp, C)
@@ -84,13 +80,19 @@ class cube_t:
 				if self.co[C[3]] == -1:
 					self.co[C[3]] = 2
 			E = edge_rotate_map[count >> 1][type.value]
+			#print("E=",E)
+			flag = False
 			if type.value >= 4:
 				self.eo[E[0]] ^= 1
 				self.eo[E[1]] ^= 1
 				self.eo[E[2]] ^= 1
 				self.eo[E[3]] ^= 1
+				#flag = True
 			swap(self.ep, E)
 			swap(self.eo, E)
+			#if flag == True:
+				#ind = self.ep.index(4)
+				#print("E=", E, " index=", ind, " orinent=", self.eo[ind])
 
 	def getBlock(self, level: int, x: int, y: int) -> block_t:
 		corner_orient_map = [[1, 3, 4], [1, 5, 3], [1, 2, 5], [1, 4, 2], [0, 4, 3], [0, 3, 5], [0, 5, 2], [0, 2, 4]]
