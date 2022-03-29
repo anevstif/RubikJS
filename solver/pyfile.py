@@ -42,18 +42,27 @@ def rotateCube(cube, command):
 def findCrossEdge(cube, edge):
 	dir = {
 		4:["B'", "B", "F D2 F' B2", "F' D2 F B2", "", "R2 D B2", "F2 D2 B2", "L2 D' B2", "B2", "D B2", "D2 B2", "D' B2", "B U' L U"],
-		5:["B D' B' R2", "R'", "R", "L D2 L' R2", "B2 D' R2", "", "U", "F2 D R2", "L2 D2 R2", "D' R2", "D R2", "D2 R2", "R U' B U"],
+		5:["B D' B' R2", "R'", "R", "L D2 L' R2", "B2 D' R2", "", "U", "F2 D R2", "L2 D2 R2", "R2", "D R2", "D2 R2", "R U' B U"],
 		6:["L' D F2", "R D' F2", "F'", "F", "B2 D2 F2", "R2 D' F2", "", "L2 D F2", "D2 F2", "D' F2", "F2", "D F2", "F U' R U"],
 		7:["L", "R D2 R' L2", "F D' F' L2", "L'", "B2 D L2", "R2 D2 L2", "F2 D' L2", "", "D L2", "D2 L2", "D' L2", "L2", "L U' F U"]}
 	arr = dir.get(edge)
 	ind = cube.ep.index(edge)
 	solv = arr[ind]
+	print("edge=", edge, " index=", ind, " solv=" + solv)
 	rotateCube(cube, solv)
 	if cube.eo[edge] == 1:
 		addSolv = arr[12]
 		rotateCube(cube, addSolv)
 		solv = solv + " " + addSolv
 	return solv
+
+def findCrossCorner(cube, corner):
+	dir = {
+		4:["L' D' L D", "D L' D' L D", "D2 L' D' L D", "D' L' D' L D", "", "B' D' B D2 L' D' L D", "R' D' R D' L' D' L D", "F' D' F L' D' L D", "L' D' L D L' D' L D"],
+		5:["", "", "", "", "", "", "", ""],
+		6:["", "", "", "", "", "", "", ""],
+		7:["", "", "", "", "", "", "", ""]}
+	}
 
 def solvCross(cube):
 	solv = findCrossEdge(cube, 4).strip()
