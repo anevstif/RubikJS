@@ -29,7 +29,7 @@ func main() {
 }
 
 func fromPy(task string) string {
-	cmd := exec.Command("python",
+	cmd := exec.Command("python3",
 		"-c",
 		"from solver.pyfile import solver; solver('"+strings.Replace(task, "'", "\\'", -1)+"');")
 	out, err := cmd.Output()
