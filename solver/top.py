@@ -1,6 +1,8 @@
 from solver.rubic import cube_t, rotateCube
 
-def findCrossEdge(cube:cube_t, edge:int):
+def findTopEdge(cube:cube_t, edge:int):
+	if edge < 4 or edge > 7:
+		return ""
 	dir = {
 		4:["B'", "B", "F D2 F' B2", "F' D2 F B2", "", "R2 D B2", "F2 D2 B2", "L2 D' B2", "B2", "D B2", "D2 B2", "D' B2", "B U' L U"],
 		5:["B D' B' R2", "R'", "R", "L D2 L' R2", "B2 D' R2", "", "F2 D R2", "L2 D2 R2", "D' R2", "R2", "D R2", "D2 R2", "R U' B U"],
@@ -16,7 +18,9 @@ def findCrossEdge(cube:cube_t, edge:int):
 		solv = solv + " " + addSolv
 	return solv
 
-def findCrossCorner(cube:cube_t, corner:int):
+def findTopCorner(cube:cube_t, corner:int):
+	if corner < 4 or corner > 7:
+		return ""
 	dir = {
 		4:["", "D", "D2", "D'", "", "B' D' B D2", "R' D2 R", "F' D' F", "L' D' L D"],
 		5:["D'", "", "D", "D2", "L' D' L", "", "R' D' R D2", "F' D2 F", "B' D' B D"],
@@ -39,14 +43,16 @@ def findCrossCorner(cube:cube_t, corner:int):
 			return ""
 	return solv.strip()
 
-def solvCross(cube:cube_t):
+def solvTop(cube:cube_t):
+	if cube == None:
+		return ""
 	edges = [4,5,6,7]
 	corners = [4,5,6,7]
 	solv = ""
 	for e in edges:
-		solv = solv.strip() + " " + findCrossEdge(cube, e).strip()
+		solv = solv.strip() + " " + findTopEdge(cube, e).strip()
 		#print("[",solv, "]")
 	for c in corners:
-		solv = solv.strip() + " " + findCrossCorner(cube, c).strip()
+		solv = solv.strip() + " " + findTopCorner(cube, c).strip()
 		#print("[",solv, "]")
 	return solv.strip()

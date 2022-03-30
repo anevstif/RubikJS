@@ -1,6 +1,6 @@
 from solver.rubic import cube_t, rotateCube
-from solver.cross import solvCross
-from solver.mid import solvMid
+from solver.top import solvTop
+from solver.midl import solvMidl
 
 def rotUpFace(cube):
 	com = ["U", "U2", "U'", ""]
@@ -38,6 +38,6 @@ def solver(a):
 	rotateCube(cube, a.upper())
 	print(cube.ep)
 	print(cube.eo)
-	solv = restrictSolv(rotUpFace(cube).strip() + " " + solvCross(cube).strip() + " " + solvMid(cube).strip())
+	solv = restrictSolv(rotUpFace(cube).strip() + " " + solvTop(cube).strip() + " " + solvMidl(cube).strip())
 	print(solv)
 
