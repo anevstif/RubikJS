@@ -36,8 +36,8 @@ def restrictSolv(solv):
 def solver(a):
 	cube = cube_t()
 	rotateCube(cube, a.upper())
-	#print(cube.ep)
-	#print(cube.eo)
+	print(cube.ep)
+	print(cube.eo)
 	solv = restrictSolv(rotUpFace(cube).strip() + " " + solvCross(cube).strip() + " " + solvMid(cube).strip())
 	print(solv)
 
