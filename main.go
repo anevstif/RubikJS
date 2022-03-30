@@ -29,7 +29,7 @@ func main() {
 }
 
 func fromPy(task string) string {
-	cmd := exec.Command("python",
+	cmd := exec.Command("python3",
 		"-c",
 		"from solver.pyfile import solver; solver('"+strings.Replace(task, "'", "\\'", -1)+"');")
 	out, err := cmd.Output()
@@ -82,7 +82,7 @@ func setHandleFunc(task string) {
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
 	//запускаем сервер на порту 8081
-	err := http.ListenAndServe(":8082", mux)
+	err := http.ListenAndServe(":8081", mux)
 	if err != nil {
 		fmt.Printf("error %s\n", err)
 		return
