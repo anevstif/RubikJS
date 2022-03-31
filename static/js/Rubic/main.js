@@ -83,7 +83,7 @@ function ajaxRequest(dataTask) {
  */
 function startClick() {
     if (r.keyStatus != r_keyStatus_none) {
-        return;
+        //return;
     }
     let tasks = getTask().join(" ");
     ajaxRequest(tasks);
@@ -95,11 +95,40 @@ function solverClick() {
     }
     r.updateSolver(getSolver());
     r.keyStatus = r_keyStatus_prepareSolver;
+}
 
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}
+
+function generateClick() {
+    face = ["U", "D", "F", "B", "L", "R"]
+    dir = ["", "'", "2"]
+    s = ""
+    lenScramble = getRandomInt(100) + 1
+    for (i = 0; i < lenScramble; i++) {
+        s = s + " " + face[getRandomInt(6)] + dir[getRandomInt(3)]
+    }
+    let elem = document.getElementById("task")
+    elem.value = s.trim()
+}
+
+function animateClick(value) {
+    document.getElementById("anim").innerHTML = value.checked
+    anim = value.checked
+    if (anim) {
+        r.speed = document.getElementById("speed").value;
+    } else {
+        r.speed = 1000
+    }
 }
 
 function spdInp() {
-    r.speed = document.getElementById("speed").value;
+    anim = document.getElementById("anim").value
+    if (anim) {
+        r.speed = document.getElementById("speed").value;
+    }
 }
 
 /*

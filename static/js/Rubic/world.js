@@ -31,17 +31,9 @@ class World {
 
     update()
     {
-	    /*
-        if ( this.keyboard.pressed("1") )
-		    console.debug('press 1');
-	    if ( this.keyboard.pressed("2") )
-		    console.debug('press 2');
-        */
         this.controls.update();
         var delta = this.clock.getDelta();
         return delta;
-        //this.geom.rotation.x += delta * THREE.Math.degToRad(30)
-        //this.geom.rotation.y += delta * THREE.Math.degToRad(45)
     }
 
     render() 

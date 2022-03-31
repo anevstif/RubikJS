@@ -28,6 +28,7 @@ func main() {
 	setHandleFunc(task)
 }
 
+//запуск решателя на python
 func fromPy(task string) string {
 	cmd := exec.Command("python3",
 		"-c",
@@ -39,9 +40,8 @@ func fromPy(task string) string {
 	return (string(out))
 }
 
-// AJAX Request Handler
+// AJAX обработчик
 func ajaxHandler(w http.ResponseWriter, r *http.Request) {
-	//*
 	data, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -60,7 +60,6 @@ func ajaxHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Printf("ajax data:\n -task: [%s]\n -solution: [%s]\n", string(data), sol)
 	w.Write(a)
-	//w.Write([]byte("consectetur adipisicing elit."))
 }
 
 func setHandleFunc(task string) {
@@ -108,15 +107,13 @@ func home(task string) http.HandlerFunc {
 			return
 		}
 
-		// Затем мы используем метод Execute() для записи содержимого
-		// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
-		// возможность отправки динамических данных в шаблон.
-
 		data := TemplateData{
 			Task:     task,
 			Solution: getSolution(task),
 		}
-
+		// Затем мы используем метод Execute() для записи содержимого
+		// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
+		// возможность отправки динамических данных в шаблон.
 		err = ts.Execute(w, data)
 		if err != nil {
 			log.Println(err.Error())

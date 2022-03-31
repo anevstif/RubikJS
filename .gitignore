@@ -1,5 +1,4 @@
 .idea/
 *.pyc
-main
+rubik
 .DS_Store
-Solv

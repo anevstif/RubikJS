@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Rubic visualyser</title>
+	<title>Rubik visualyser</title>
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 	
 	<link rel="stylesheet" href="./static/styles/base.css">
@@ -22,7 +22,12 @@
 		<p>Task</p>
 		<textarea id="task" >{{ .Task }}</textarea><br>
 		<input type="button" name="btn" value="start" onclick="startClick();">
+		<input type="button" value="generate" onclick="generateClick();">
 		<p>speed:<input id="speed" type="range" min="0.1" max="10" step="0.1" value="1" oninput="spdInp();"></p>
+		<div>
+			<input type="checkbox" id="anim" name="animate" checked onchange="animateClick(this);">
+			<label for="animate">Animate</label>
+		</div>
 		<p>Solver</p>
 		<textarea id="solver">{{ .Solution}}</textarea><br>
 		<input type="button" value="solver" onclick="solverClick();">
