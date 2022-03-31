@@ -57,13 +57,14 @@ def solver(a):
 	print(s,"[", bc, "]")
 	#solv = solv+" "+bc
 	'''
-	#print(cube.ep)
+	f = ""
 	s = ""
-	for i in range(8,12):
-		if i == cube.ep[i]:
+	for i in range(0,4):
+		if i == cube.cp[i]:
 			s += "0"
 		else:
 			s += "1"
-	#print(s)
+			f += str(cube.cp[i])
+	print(s, f)
 	print(solv)
 

@@ -51,6 +51,15 @@ def findRightBottomCross(cube):
 	rotateCube(cube, solv)
 	return solv
 
+def crossBottomCorners(cube):
+	
+	s = ""
+	for i in range(0,4):
+		if i == cube.cp[i]:
+			s += "0"
+		else:
+			s += "1"
+
 def solvBottom(cube):
 	solv = findBottomCross(cube).strip()+" "+rotBottomFace(cube)
 	solv = solv.strip() + " " + findRightBottomCross(cube).strip()
