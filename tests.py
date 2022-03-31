@@ -2,6 +2,7 @@ import sys
 from solver.rubic import cube_t, rotateCube
 from solver.top import findTopEdge, findTopCorner, solvTop
 from solver.midl import findMidlEdge, solvMidl
+from solver.bottom import findBottomCross, solvBottom
 from random import randint
 
 RED = "\033[31m"
@@ -33,6 +34,8 @@ def printFunctionTests(func, name, testCount):
 	else:
 		print(RED,"!!! NOT OK TEST",errCount,"FROM",testCount,"(",(errCount * 100 / testCount),"%)",YLW, name,RES)
 
+def printError(funcName, elem, elemNumber, character, characterNumber, scramble, solver):
+	print("Error!:",funcName,"for",elem,":",elemNumber, " error",character, characterNumber," scrabble: [", scramble, "] solv:[",solver,"]")
  
 #|==TESTS FOR FUNCTIONS==|
 
@@ -115,23 +118,52 @@ def testSolvMidl(cube, sc, p=-1):
 	for i in range(0,4):
 		ind = cube.ep.index(i)
 		if ind != i:
-			print("Error!: solvMidl for edge:", i, " error position ", ind," scrabble: [", sc, "] solv:[",solv,"]")
+			printError("solvMidl","edge:",i,"position",ind,sc,solv)
 			flag = False
 		else:
 			if cube.eo[ind] == 1:
-				print("Error!: solvMidl for edge:", i, " error orientation, scrabble: [", sc, "] solv:[",solv,"]")
+				printError("solvMidl","edge:",i,"orientation",ind,sc,solv)
+				flag = False
+	return flag
+
+def testBottomCross(cube, sc, p=-1):
+	sc = sc + " " + solvTop(cube).strip() + " " + solvMidl(cube).strip()
+	solv = findBottomCross(cube)
+	flag = True
+	s = ""
+	for i in range(8, 12):
+		s += str(cube.eo[i])
+	if s != "0000":
+		printError("findBottomCross","edge:","[",s,"]",sc,solv)
+		flag = False
+	return flag
+
+def testSolvBottom(cube, sc, p=-1):
+	sc = sc + " " + solvTop(cube).strip() + " " + solvMidl(cube).strip()
+	solv = solvBottom(cube).strip()
+	flag = True
+	for i in range(8,12):
+		ind = cube.ep.index(i)
+		if ind != i:
+			printError("solvBottom","edge:",i,"position",ind,sc,solv)
+			flag = False
+		else:
+			if cube.eo[ind] == 1:
+				printError("solvBottom","edge:",i,"orientation",ind,sc,solv)
 				flag = False
 	return flag
 
 #|========================|
 
 def tests():
-	testCount = 5000
+	testCount = 1000
 	printFunctionTests(testFindTopEdge, "testFindTopEdge", testCount)
 	printFunctionTests(testFindTopCorner, "testFindTopCorner", testCount)
 	printFunctionTests(testSolvTop, "testSolvTop", testCount)
 	printFunctionTests(testFindMidlEdge, "testFindMidlEdge", testCount)
 	printFunctionTests(testSolvMidl, "testSolvMidl", testCount)
+	printFunctionTests(testBottomCross, "testBottomCross", testCount)
+	printFunctionTests(testSolvBottom, "testSolvBottom", testCount)
 
 def individualTest(funcName, sc, param):
 	cube = cube_t()

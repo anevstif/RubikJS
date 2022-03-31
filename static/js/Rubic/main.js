@@ -32,6 +32,8 @@ function getSolver(solver) {
         }
     }
     let solverCommands = (solverCommand) ? solverCommand.split(' ') : [];
+    solverCount = document.getElementById("HTM");
+    solverCount.innerHTML = "HTM: " + solverCommands.length + " steps";
     return solverCommands
 }
 

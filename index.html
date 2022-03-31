@@ -9,8 +9,8 @@
 	<script src="./static/js/THREE/Three.js"></script>
 	<script src="./static/js/THREE/Detector.js"></script>
 	<script src="./static/js/THREE/OrbitControls.js"></script>
-	<script src="./static/js/THREE/THREEx.KeyboardState.js"></script>
-	<script src="./static/js/THREE/THREEx.FullScreen.js"></script>
+	<!--script src="./static/js/THREE/THREEx.KeyboardState.js"></script>
+	<script src="./static/js/THREE/THREEx.FullScreen.js"></script-->
 	<script src="./static/js/THREE/THREEx.WindowResize.js"></script>
 	<script src="./static/js/jquery/jquery-2.1.0.min.js"></script>
 	<script src="./static/js/Rubic/materials.js"></script>
@@ -29,6 +29,7 @@
 			<label for="animate">Animate</label>
 		</div>
 		<p>Solver</p>
+		<p id="HTM">HTM:0</p>
 		<textarea id="solver">{{ .Solution}}</textarea><br>
 		<input type="button" value="solver" onclick="solverClick();">
 	</div>

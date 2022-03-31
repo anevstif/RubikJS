@@ -1,6 +1,7 @@
 from solver.rubic import cube_t, rotateCube
 from solver.top import solvTop
 from solver.midl import solvMidl
+from solver.bottom import solvBottom
 
 def rotUpFace(cube):
 	com = ["U", "U2", "U'", ""]
@@ -36,8 +37,33 @@ def restrictSolv(solv):
 def solver(a):
 	cube = cube_t()
 	rotateCube(cube, a.upper())
-	print(cube.ep)
-	print(cube.eo)
-	solv = restrictSolv(rotUpFace(cube).strip() + " " + solvTop(cube).strip() + " " + solvMidl(cube).strip())
+	#print(cube.ep)
+	solv = restrictSolv(rotUpFace(cube).strip()+" "+solvTop(cube).strip()+" "+solvMidl(cube).strip() + " " + solvBottom(cube).strip()).strip()
+	
+	'''
+	i8=cube.ep.index(8)
+	i9=cube.ep.index(9)
+	i10=cube.ep.index(10)
+	i11=cube.ep.index(11)
+	#print(cube.ep)
+	print(cube.eo[8:])
+	#print("[",cube.eo[i8],cube.eo[i9],cube.eo[i10],cube.eo[i11],"]")
+	
+	#print(findBottomCross(cube))
+	s = ""
+	for i in range(8, 12):
+		s += str(cube.eo[cube.ep.index(i)])
+	bc = findBottomCross(cube).strip()
+	print(s,"[", bc, "]")
+	#solv = solv+" "+bc
+	'''
+	#print(cube.ep)
+	s = ""
+	for i in range(8,12):
+		if i == cube.ep[i]:
+			s += "0"
+		else:
+			s += "1"
+	#print(s)
 	print(solv)
 

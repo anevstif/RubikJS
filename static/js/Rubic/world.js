@@ -1,7 +1,7 @@
 class World {
     constructor(size, geometry) {        
         this.size = size;
-        this.keyboard = new THREEx.KeyboardState();
+        //this.keyboard = new THREEx.KeyboardState();
         this.clock = new THREE.Clock();
         this.scene = new THREE.Scene();
         this.camera = createCamera(size)
@@ -9,7 +9,7 @@ class World {
         this.camera.lookAt(this.scene.position);
         this.renderer = createRenderer()
         THREEx.WindowResize(this.renderer, this.camera);
-        THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
+        //THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
 	    this.controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );  
         this.scene.add(addLight(size));
         this.geom = geometry;
