@@ -1,7 +1,6 @@
 class World {
     constructor(size, geometry) {        
         this.size = size;
-        //this.keyboard = new THREEx.KeyboardState();
         this.clock = new THREE.Clock();
         this.scene = new THREE.Scene();
         this.camera = createCamera(size)
@@ -9,7 +8,6 @@ class World {
         this.camera.lookAt(this.scene.position);
         this.renderer = createRenderer()
         THREEx.WindowResize(this.renderer, this.camera);
-        //THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
 	    this.controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );  
         this.scene.add(addLight(size));
         this.geom = geometry;
@@ -51,13 +49,8 @@ function createCamera(size) {
 }
 
 function createRenderer() {    
-    var renderer;
-    if ( Detector.webgl )
-        renderer = new THREE.WebGLRenderer( {antialias:true} );
-    else
-        renderer = new THREE.CanvasRenderer(); 
+    var renderer = new THREE.WebGLRenderer( {antialias:true} );
     renderer.setSize(window.innerWidth, window.innerHeight);
-    //container = document.getElementById( 'scene-container' );
     container = document.createElement( 'div' );
     container.setAttribute("id","scene-container");
 	document.body.appendChild( container );

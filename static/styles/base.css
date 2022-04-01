@@ -7,6 +7,11 @@ body
 	overflow: hidden;
 }
 
+textarea {
+	width: 350px;
+	height: 250px;
+}
+
 #scene-container {
 	/* tell our scene container to take up the full page */
 	position: absolute;
@@ -27,3 +32,5 @@ body
 	position: absolute;
 	z-index: 90;
 }
+
+

@@ -52,10 +52,16 @@ const vecY = new THREE.Vector3(0,1,0);
 const vecZ = new THREE.Vector3(0,0,1);
 const vectorAxis = {"x":vecX, "y":vecY, "z":vecZ}
 
+
+
 class RubicGeometry {
 	constructor(size) {
 		this.size = parseInt(size) || 3;
-		this.centerPivot = new THREE.Object3D;
+
+		const geometry = new THREE.CubeGeometry( size * 0.7, size * 0.7, size * 0.7 );
+		const material = new THREE.MeshBasicMaterial( {color: 0x0f0f0f} );
+
+		this.centerPivot = new THREE.Mesh( geometry, material );//new THREE.Object3D;
 		this.helper = new THREE.Object3D;
 		this.geom = [];
 		this.angle = 0;
@@ -191,11 +197,15 @@ class RubicGeometry {
 			return false;
 		} else {
 			this.angle = 0;
-			this.ungroupFromPivot(axis, segment, direction);
-			this.recombination(axis,segment,direction);
-			this.setPositionBox();
+			this.rotateGeomFast(axis,segment,direction);
 			return true;
 		}
+	}
+
+	rotateGeomFast(axis,segment,direction) {
+		this.ungroupFromPivot(axis, segment, direction);
+		this.recombination(axis,segment,direction);
+		this.setPositionBox();
 	}
 
 	recombination_90(e, size) {
@@ -409,5 +419,3 @@ function createRubicBox(x,y,z,size, delta) {
 	//delta = 0.5-(size / 2);// + ((size % 2) * 0.5);
 	return (new RubicBox(x, y, z, delta, boxType, side));
 }
-
-

@@ -14,7 +14,7 @@ function getTask(task) {
         }
     }
     let taskCommands = (taskCommand) ? taskCommand.split(' ') : [];
-    return taskCommands
+    return taskCommands;
 }
 
 function getSolver(solver) {
@@ -34,7 +34,7 @@ function getSolver(solver) {
     let solverCommands = (solverCommand) ? solverCommand.split(' ') : [];
     solverCount = document.getElementById("HTM");
     solverCount.innerHTML = "HTM: " + solverCommands.length + " steps";
-    return solverCommands
+    return solverCommands;
 }
 
 /*
@@ -55,7 +55,7 @@ function afterSend(result) {
     let jsonObj = JSON.parse(result, (key, value) => {
         return value;
     });
-    console.info("result:"+result+" task:" + jsonObj.task + "; solution:" + jsonObj.solution);
+    console.info("task:" + jsonObj.task + ";\nsolution:" + jsonObj.solution);
     r.updateTask(getTask(jsonObj.task));
     r.updateSolver(getSolver(jsonObj.solution));
     r.geom = new RubicGeometry(r.size);
@@ -67,7 +67,7 @@ function ajaxRequest(dataTask) {
     console.info("start data:" + dataTask)
     $(document).ready(function (){
         $.ajax({
-            url: '/ajax',
+            url: '/ajax'+String(r.size),
             type: "post",
             data: dataTask,
             dataType: 'html',
@@ -99,35 +99,36 @@ function solverClick() {
     r.keyStatus = r_keyStatus_prepareSolver;
 }
 
-
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
 
 function generateClick() {
-    face = ["U", "D", "F", "B", "L", "R"]
-    dir = ["", "'", "2"]
-    s = ""
-    lenScramble = getRandomInt(100) + 1
+    face = ["U", "D", "F", "B", "L", "R"];
+    dir = ["", "'", "2"];
+    s = "";
+    lenScramble = getRandomInt(100) + 1;
     for (i = 0; i < lenScramble; i++) {
-        s = s + " " + face[getRandomInt(6)] + dir[getRandomInt(3)]
+        s = s + " " + face[getRandomInt(6)] + dir[getRandomInt(3)];
     }
-    let elem = document.getElementById("task")
-    elem.value = s.trim()
+    let elem = document.getElementById("task");
+    elem.value = s.trim();
 }
 
 function animateClick(value) {
-    document.getElementById("anim").innerHTML = value.checked
-    anim = value.checked
+    document.getElementById("anim").innerHTML = value.checked;
+    anim = value.checked;
     if (anim) {
         r.speed = document.getElementById("speed").value;
+        r.animate = true;
     } else {
-        r.speed = 1000
+        r.speed = 1000;
+        r.animate = false;
     }
 }
 
 function spdInp() {
-    anim = document.getElementById("anim").value
+    anim = document.getElementById("anim").value;
     if (anim) {
         r.speed = document.getElementById("speed").value;
     }
@@ -137,5 +138,6 @@ function spdInp() {
     =======
     program
  */
-var r = new Rubic();
+size = document.getElementById("size").innerHTML
+var r = new Rubic(size);
 animate();

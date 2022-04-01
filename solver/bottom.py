@@ -2,14 +2,14 @@ from solver.rubic import cube_t, rotateCube
 
 def findBottomCross(cube:cube_t):
 	fm = ["F L D L' D' F'", "R F D F' D' R'", "B R D R' D' B'", "L B D B' D' L'"]
-	com = {    "0000":"",
-				"0011":str(fm[0]+" "+fm[0]),
-				"0101":str(fm[1]),
-				"0110":str(fm[1]+" "+fm[1]),
-				"1001":str(fm[3]+" "+fm[3]),
-				"1010":str(fm[2]),
-				"1100":str(fm[2]+" "+fm[2]),
-				"1111":str(fm[2]+" "+fm[0]+" "+fm[0])}
+	com = {	"0000":"",
+			"0011":str(fm[0]+" "+fm[0]),
+			"0101":str(fm[1]),
+			"0110":str(fm[1]+" "+fm[1]),
+			"1001":str(fm[3]+" "+fm[3]),
+			"1010":str(fm[2]),
+			"1100":str(fm[2]+" "+fm[2]),
+			"1111":str(fm[2]+" "+fm[0]+" "+fm[0])}
 	s = ""
 	for i in range(8,12):
 		s += str(cube.eo[i])
@@ -51,22 +51,43 @@ def findRightBottomCross(cube):
 	rotateCube(cube, solv)
 	return solv
 
-def crossBottomCorners(cube):
-	
-	s = ""
+def findBottomCorners(cube, corner):
+	fm = ["D' R' D L D' R D L'", "D L D' R' D L' D' R", "D R D' L' D R' D' L", "D' L' D R D' L D R'"]
+	dir = {	0:["", fm[0], fm[1], fm[2]],
+			1:[fm[1], "", fm[3], fm[0]],
+			2:[fm[2], fm[1], "", fm[3]],
+			3:[fm[0], fm[3], fm[2], ""]}
+	ind = cube.cp.index(corner)
+	arr = dir.get(corner)
+	solv = arr[ind]
+	rotateCube(cube, solv)
+	return solv
+
+def rotateBottomCorners(cube):
+	fm = "F' U' F U F' U' F U"
+	solv = ""
 	for i in range(0,4):
-		if i == cube.cp[i]:
-			s += "0"
-		else:
-			s += "1"
+		while cube.co[2] != 0:
+			rotateCube(cube, fm)
+			solv += (" " + fm)
+		rotateCube(cube, "D")
+		solv += " D"
+	return solv.strip()
 
 def solvBottom(cube):
 	solv = findBottomCross(cube).strip()+" "+rotBottomFace(cube)
 	solv = solv.strip() + " " + findRightBottomCross(cube).strip()
+	corners = [0,1,2,3]
+	for c in corners:
+		solv = solv.strip() + " " + findBottomCorners(cube, c).strip()
+	solv = solv.strip() + " " + rotateBottomCorners(cube).strip()
 	return solv.strip()
 
-
-
-
-
+def solvBottom2(cube):
+	solv = ""
+	corners = [0,1,2,3]
+	for c in corners:
+		solv = solv.strip() + " " + findBottomCorners(cube, c).strip()
+	solv = solv.strip() + " " + rotateBottomCorners(cube).strip()
+	return solv.strip()
 	

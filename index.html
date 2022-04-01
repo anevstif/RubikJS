@@ -2,15 +2,10 @@
 <html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Rubik visualyser</title>
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-	
 	<link rel="stylesheet" href="./static/styles/base.css">
 	<link rel="icon" href="./static/images/favicon.ico" type="image/x-icon">
-	
 	<script src="./static/js/THREE/Three.js"></script>
-	<script src="./static/js/THREE/Detector.js"></script>
 	<script src="./static/js/THREE/OrbitControls.js"></script>
-	<!--script src="./static/js/THREE/THREEx.KeyboardState.js"></script>
-	<script src="./static/js/THREE/THREEx.FullScreen.js"></script-->
 	<script src="./static/js/THREE/THREEx.WindowResize.js"></script>
 	<script src="./static/js/jquery/jquery-2.1.0.min.js"></script>
 	<script src="./static/js/Rubic/materials.js"></script>
@@ -32,6 +27,7 @@
 		<p id="HTM">HTM:0</p>
 		<textarea id="solver">{{ .Solution}}</textarea><br>
 		<input type="button" value="solver" onclick="solverClick();">
+		<p id="size" hidden>{{ .Size }}</p>
 	</div>
 	<script src="static/js/Rubic/rubic.js"></script>
 	<script src="static/js/Rubic/main.js"></script>

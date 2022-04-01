@@ -5,8 +5,6 @@ const	r_keyStatus_none = 			0,
 		r_keyStatus_prepareTask = 	5,
 		r_keyStatus_prepareSolver = 6;
 
-
-
 class Rubic {
 	constructor(size = 3) {
 		this.size = parseInt(size) || 3;
@@ -21,6 +19,7 @@ class Rubic {
 		this.geom = new RubicGeometry(this.size);
 		this.world = new World(this.size, this.geom.getGeom());
 		this.speed = 1;
+		this.animate = true;
 	}
 
 	updateTask(commands) {
@@ -41,6 +40,10 @@ class Rubic {
 		this.prepareToMoveCommand(this.taskCommands[this.currentTaskIndex])
 		this.keyStatus = r_keyStatus_taskRotate;
 		this.currentTaskIndex += 1;
+		if (this.animate == false) {
+			this.geom.rotateGeomFast(this.axisRotation, this.segmentRotation, this.directionRotation);
+			this.keyStatus = r_keyStatus_prepareTask;
+		}
 
 	}
 
@@ -52,8 +55,13 @@ class Rubic {
 		this.prepareToMoveCommand(this.solverCommands[this.currentSolverIndex])
 		this.keyStatus = r_keyStatus_solverRotate;
 		this.currentSolverIndex += 1;
+		if (this.animate == false) {
+			this.geom.rotateGeomFast(this.axisRotation, this.segmentRotation, this.directionRotation);
+			this.keyStatus = r_keyStatus_prepareSolver;
+		}
 	}
 
+	
 
 	prepareToMoveCommand(command) {
 		let item = command + " ";

@@ -1,5 +1,21 @@
 from solver.rubic import cube_t, rotateCube
 
+def rotUpFace(cube):
+	com = ["U", "U2", "U'", ""]
+	sol = [0, 0, 0, 1]
+	for i in range(4):
+		rotateCube(cube, "U")
+		for edge in range(4,8):
+			ind = cube.ep.index(edge)
+			if ind == edge:
+				sol[i] += 2
+				if cube.eo[ind] == 0:
+					sol[i] += 1
+	maxSol = max(sol)
+	solv = com[sol.index(maxSol)]
+	rotateCube(cube, solv)
+	return solv
+
 def findTopEdge(cube:cube_t, edge:int):
 	if edge < 4 or edge > 7:
 		return ""
@@ -48,11 +64,18 @@ def solvTop(cube:cube_t):
 		return ""
 	edges = [4,5,6,7]
 	corners = [4,5,6,7]
-	solv = ""
+	solv = rotUpFace(cube).strip()
 	for e in edges:
 		solv = solv.strip() + " " + findTopEdge(cube, e).strip()
-		#print("[",solv, "]")
 	for c in corners:
 		solv = solv.strip() + " " + findTopCorner(cube, c).strip()
-		#print("[",solv, "]")
+	return solv.strip()
+
+def solvTop2(cube:cube_t):
+	if cube == None:
+		return ""
+	solv = ""
+	corners = [4,5,6,7]
+	for c in corners:
+		solv = solv.strip() + " " + findTopCorner(cube, c).strip()
 	return solv.strip()
