@@ -32,4 +32,3 @@ def solver2(a):
 	rotateCube(cube, a.upper())
 	solv = restrictSolv(solvTop2(cube).strip()+" "+solvBottom2(cube).strip()).strip()
 	print(solv)
-

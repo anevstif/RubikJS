@@ -47,7 +47,7 @@ def findRightBottomCross(cube):
 			s += "0"
 		else:
 			s += "1"
-	solv = com.get(s).strip()
+	solv = str(com.get(s))
 	rotateCube(cube, solv)
 	return solv
 
@@ -74,6 +74,58 @@ def rotateBottomCorners(cube):
 		solv += " D"
 	return solv.strip()
 
+def rotateBottomCorners2(cube):
+	fm = "L' U L U' L' U L U'"
+	solv = ""
+	for i in range(0,4):
+		while cube.co[3] != 0:
+			rotateCube(cube, fm)
+			solv += (" " + fm)
+		rotateCube(cube, "D'")
+		solv += " D'"
+	return solv.strip()
+
+
+def rotateDoubleSide(cube, s):
+	dir = ["01", "12", "23", "30"]
+	rot = ["D'", "", "D", "D2"]
+	fm = "F L' F R2 F' L F R2 F2"
+	pos = -1
+	solv = ""
+	for i in dir:
+		pos = s.find(i)
+		if pos != -1:
+			break
+	if pos == -1:
+		if ((cube.cp[0] == 0)and(cube.cp[3]==3))or\
+		((cube.cp[0] == 1) and (cube.cp[3]==0)) or\
+		((cube.cp[0] == 2) and (cube.cp[3]==1)) or\
+		((cube.cp[0] == 3) and (cube.cp[3]==2)):
+			rotateCube(cube, "D2")
+			solv = "D2"
+		else:
+			rotateCube(cube, fm)
+			solv = fm
+			for i in dir:
+				pos = s.find(i)
+				if pos != -1:
+					break
+	if pos != -1:
+		solv = solv + " " + rot[pos] 
+		solv = solv.strip() +" "+ fm
+		rotateCube(cube, solv.strip())
+	return solv.strip()
+
+def checkEnd(cube):
+	dir = {"0123":"", "1230":"D'", "2301":"D2","3012":"D"}
+	s= "".join(map(str,cube.cp[:4]))
+	com = dir.get(s)
+	if com == None:
+		return rotateDoubleSide(cube, s)
+	else:
+		rotateCube(cube, com)
+		return com
+
 def solvBottom(cube):
 	solv = findBottomCross(cube).strip()+" "+rotBottomFace(cube)
 	solv = solv.strip() + " " + findRightBottomCross(cube).strip()
@@ -84,10 +136,7 @@ def solvBottom(cube):
 	return solv.strip()
 
 def solvBottom2(cube):
-	solv = ""
-	corners = [0,1,2,3]
-	for c in corners:
-		solv = solv.strip() + " " + findBottomCorners(cube, c).strip()
-	solv = solv.strip() + " " + rotateBottomCorners(cube).strip()
+	solv = rotateBottomCorners2(cube).strip()+" "+checkEnd(cube)
+	solv = solv.strip() + " " + checkEnd(cube)
+	solv = solv.strip() + " " + checkEnd(cube)
 	return solv.strip()
-	

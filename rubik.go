@@ -6,13 +6,17 @@ import (
 	"html/template"
 	"io/ioutil"
 	"log"
-	"net/http"
-	"os/exec"
-	"strings"
-	"os"
 	"math/rand"
+	"net/http"
+	"os"
+	"os/exec"
+	"runtime"
 	"strconv"
+	"strings"
+	//"net"
 )
+
+var PYTHON = "python3"
 
 type TemplateData struct {
 	Task     string `json:"task"`
@@ -20,30 +24,38 @@ type TemplateData struct {
 	Size	 int	`json:"size"`
 }
 
+type ParseData struct {
+	Task string
+	Gen int
+	Vis bool
+	Size int 
+}
+
 //Парсинг аргументов командной строки
-func parseArgs(args []string) (string, bool, int, int) {
-	gen := 0
-	size := 3
-	vis :=false
+func parseArgs(args []string) ParseData {
+	pd := ParseData{"", 0, false, 3}
 	maxIndex := len(args) - 1
-	task := args[0]
-	flagCom := 0
-	if (len(task)>0 && task[0] == '-') {
-		task = ""
+	if maxIndex <= 0 {
+		return pd
 	}
-	for i:= 0; i <= maxIndex; i++ {
+	pd.Task = args[1]
+	flagCom := 0
+	if (len(pd.Task)>0 && pd.Task[0] == '-') {
+		pd.Task = ""
+	}
+	for i:= 1; i <= maxIndex; i++ {
 		command := args[i]
 		if flagCom > 0 {
 			g, err := strconv.Atoi(command)
 			if err != nil { g = 0 }
 			if g < 0 { g *= -1 }
 			if g > 100 { g = 100 }
-			if flagCom == 1 {gen = g}
-			if flagCom == 2 && g > 1 && g < 4 {size = g}
+			if flagCom == 1 {pd.Gen = g}
+			if flagCom == 2 && g > 1 && g < 4 {pd.Size = g}
 			flagCom = 0
 		} else {
 			if command == "-v" {
-				vis = true
+				pd.Vis = true
 			}
 			if command == "-g" {
 				flagCom = 1
@@ -53,27 +65,28 @@ func parseArgs(args []string) (string, bool, int, int) {
 			}
 		}
 	}
-	return task, vis, gen, size
+	if (pd.Task == "") && (pd.Gen > 0) {
+		pd.Task = generationTask(pd.Gen)
+	}
+	return pd
+}
+
+func checkOS() {
+	if "windows" == runtime.GOOS {
+		PYTHON = "python"
+	}
 }
 
 func main() {
-	task := ""
-	vis := false
-	gen := 0
-	size := 3
-	if len(os.Args) > 1 {
-    	task, vis, gen, size = parseArgs(os.Args[1:])
-	}
-	if (task == "") && (gen > 0) {
-		task = generationTask(gen)
-	}
-	if vis == true {
-		fmt.Printf("Server start with task = \"" + task + "\"\n")
-		setHandleFunc(task, size)
+	checkOS()
+    pd := parseArgs(os.Args)
+	if pd.Vis == true {
+		fmt.Printf("Server start with task = \"" + pd.Task + "\"\n")
+		setHandleFunc(pd)
 	} else {
-		if task != "" {
-			solution := getSolution(task, size)
-			fmt.Printf("%s %s",task, solution)
+		if pd.Task != "" {
+			solution := getSolution(pd)
+			fmt.Printf("%s %s",pd.Task, solution)
 		}
 	}
 }
@@ -97,21 +110,11 @@ func generationTask(count int) string {
 }
 
 //запуск решателя на python
-func fromPy3(task string) string {
-	cmd := exec.Command("python3",
-		"-c",
-		"from solver.solver import solver3; solver3('"+strings.Replace(task, "'", "\\'", -1)+"');")
-	out, err := cmd.Output()
-	if err != nil {
-		fmt.Println(err)
-	}
-	return (string(out))
-}
-//запуск решателя на python
-func fromPy2(task string) string {
-	cmd := exec.Command("python3",
-		"-c",
-		"from solver.solver import solver2; solver2('"+strings.Replace(task, "'", "\\'", -1)+"');")
+func fromPy(pd ParseData) string {
+	n := fmt.Sprintf("%d",pd.Size)
+	t := strings.Replace(pd.Task, "'", "\\'", -1)
+	command := fmt.Sprintf("from solver.solver import solver%s; solver%s('%s');",n,n,t)
+	cmd := exec.Command(PYTHON, "-c", command)
 	out, err := cmd.Output()
 	if err != nil {
 		fmt.Println(err)
@@ -119,25 +122,26 @@ func fromPy2(task string) string {
 	return (string(out))
 }
 
-// AJAX обработчикb
+// AJAX обработчики
 func ajaxHandler3(w http.ResponseWriter, r *http.Request) {
 	data, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	solution := getSolution(string(data),3)
+	pd := ParseData{string(data),0,true,3}
+	solution := getSolution(pd)
 	sol := strings.Replace(solution, "\n", "", -1)
 	res := &TemplateData{
-		Task:     string(data),
+		Task:     pd.Task,
 		Solution: sol,
+		Size: pd.Size,
 	}
 	a, err := json.Marshal(res)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	fmt.Printf("ajax data:\n -task: [%s]\n -solution: [%s]\n", string(data), sol)
+	fmt.Printf("ajax data:\n -task: [%s]\n -solution: [%s]\n", pd.Task, sol)
 	w.Write(a)
 }
 
@@ -147,32 +151,32 @@ func ajaxHandler2(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	solution := getSolution(string(data),2)
+	pd := ParseData{string(data),0,true,2}
+	solution := getSolution(pd)
 	sol := strings.Replace(solution, "\n", "", -1)
 	res := &TemplateData{
-		Task:     string(data),
+		Task:     pd.Task,
 		Solution: sol,
+		Size: pd.Size,
 	}
 	a, err := json.Marshal(res)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	fmt.Printf("ajax data:\n -task: [%s]\n -solution: [%s]\n", string(data), sol)
+	fmt.Printf("ajax data:\n -task: [%s]\n -solution: [%s]\n", pd.Task, sol)
 	w.Write(a)
 }
 
-func setHandleFunc(task string, size int) {
+func setHandleFunc(pd ParseData) {
 	//создаём диспетчер путей
 	mux := http.NewServeMux()
 	//добавляем функцию обработчик главной страницы
-	mux.HandleFunc("/", home(task, size))
+	mux.HandleFunc("/", home(pd))
 	mux.HandleFunc("/ajax3", ajaxHandler3)
 	mux.HandleFunc("/ajax2", ajaxHandler2)
 	// Инициализируем FileServer, он будет обрабатывать
 	// HTTP-запросы к статическим файлам из папки "./static".
-	// Обратите внимание, что переданный в функцию http.Dir путь
-	// является относительным корневой папке проекта
+	// http.Dir путь относительно корневой папке проекта
 	fileServer := http.FileServer(http.Dir("./static/"))
 
 	// Используем функцию mux.Handle() для регистрации обработчика для
@@ -189,7 +193,7 @@ func setHandleFunc(task string, size int) {
 }
 
 // Обработчик главной страницы.
-func home(task string, size int) http.HandlerFunc {
+func home(pd ParseData) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {
 			http.NotFound(w, r)
@@ -207,9 +211,9 @@ func home(task string, size int) http.HandlerFunc {
 		}
 
 		data := TemplateData{
-			Task: task,
-			Solution: getSolution(task, size),
-			Size: size,
+			Task: pd.Task,
+			Solution: getSolution(pd),
+			Size: pd.Size,
 		}
 		// Затем мы используем метод Execute() для записи содержимого
 		// шаблона в тело HTTP ответа. Последний параметр в Execute() предоставляет
@@ -222,11 +226,9 @@ func home(task string, size int) http.HandlerFunc {
 	}
 }
 
-func getSolution(task string, size int) string {
-	if size == 3 {
-		return fromPy3(task)
-	} else if size == 2 {
-		return fromPy2(task)
+func getSolution(pd ParseData) string {
+	if pd.Size == 3 || pd.Size == 2 {
+		return fromPy(pd)
 	}
 	return ""
 }

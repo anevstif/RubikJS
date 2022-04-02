@@ -58,8 +58,8 @@ class RubicGeometry {
 	constructor(size) {
 		this.size = parseInt(size) || 3;
 
-		const geometry = new THREE.CubeGeometry( size * 0.7, size * 0.7, size * 0.7 );
-		const material = new THREE.MeshBasicMaterial( {color: 0x0f0f0f} );
+		const geometry = new THREE.CubeGeometry( size * 0.65, size * 0.65, size * 0.65 );
+		const material = new THREE.MeshBasicMaterial( {color: 0x2f2f2f} );
 
 		this.centerPivot = new THREE.Mesh( geometry, material );//new THREE.Object3D;
 		this.helper = new THREE.Object3D;

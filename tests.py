@@ -1,8 +1,8 @@
 import sys
 from solver.rubic import cube_t, rotateCube
-from solver.top import findTopEdge, findTopCorner, solvTop
+from solver.top import findTopEdge, findTopCorner, solvTop, solvTop2
 from solver.midl import findMidlEdge, solvMidl
-from solver.bottom import findBottomCross, solvBottom
+from solver.bottom import rotBottomFace, findBottomCross, findRightBottomCross, solvBottom, solvBottom2
 from random import randint
 
 RED = "\033[31m"
@@ -14,7 +14,7 @@ RES = "\033[0m"
 def randomScramble(cube):
 	face = ["U", "D", "F", "B", "L", "R"]
 	dir = ["", "2", "'"]
-	m = randint(1, 100)
+	m = randint(1, 200)
 	s = ""
 	for i in range(0, m):
 		s += face[randint(0, 5)]+dir[randint(0,2)]+" "
@@ -93,6 +93,20 @@ def testSolvTop(cube, sc, p=-1):
 				flag = False
 	return flag
 
+def testSolvTop2(cube, sc, p=-1):
+	solv = solvTop2(cube).strip()
+	flag = True
+	for i in range(4,8):
+		ind = cube.cp.index(i)
+		if ind != i:
+			print("Error!: solvTop2 for corner:", i, " error position ", ind," scrabble: [", sc, "] solv:[",solv,"]")
+			flag = False
+		else:
+			if cube.co[ind] == 1:
+				print("Error!: solvTop2 for corner:", i, " error orientation, scrabble: [", sc, "] solv:[",solv,"]")
+				flag = False
+	return flag
+
 def testFindMidlEdge(cube, sc, e=-1):
 	sc = sc + " " + solvTop(cube).strip()
 	edge = e
@@ -126,7 +140,7 @@ def testSolvMidl(cube, sc, p=-1):
 				flag = False
 	return flag
 
-def testBottomCross(cube, sc, p=-1):
+def testFindBottomCross(cube, sc, p=-1):
 	sc = sc + " " + solvTop(cube).strip() + " " + solvMidl(cube).strip()
 	solv = findBottomCross(cube)
 	flag = True
@@ -138,8 +152,29 @@ def testBottomCross(cube, sc, p=-1):
 		flag = False
 	return flag
 
-def testSolvBottom(cube, sc, p=-1):
+def testFindRightBottomCross(cube, sc, p=-1):
 	sc = sc + " " + solvTop(cube).strip() + " " + solvMidl(cube).strip()
+	sc = sc.strip() + " "+findBottomCross(cube)
+	sc = sc.strip() + " "+rotBottomFace(cube)
+	solv = findRightBottomCross(cube)
+	flag = True
+	s = ""
+	for i in range(8, 12):
+		s += str(cube.ep[i])
+	if s != "891011":
+		printError("findRightBottomCross","edge:","","position","",sc,solv)
+		flag = False
+	s = ""
+	for i in range(8, 12):
+		s += str(cube.eo[i])
+	if s != "0000":
+		printError("findRightBottomCross","edge:","","orientation","",sc,solv)
+		flag = False
+	return flag
+
+def testSolvBottom(cube, sc, p=-1):
+	sc = sc + " " + solvTop(cube).strip()
+	sc = sc.strip() + " " + solvMidl(cube).strip()
 	solv = solvBottom(cube).strip()
 	flag = True
 	for i in range(8,12):
@@ -150,6 +185,42 @@ def testSolvBottom(cube, sc, p=-1):
 		else:
 			if cube.eo[ind] == 1:
 				printError("solvBottom","edge:",i,"orientation",ind,sc,solv)
+				flag = False
+	for i in range(0,4):
+		ind = cube.cp.index(i)
+		if ind != i:
+			printError("solvBottom","corner:",i,"position",ind,sc,solv)
+			flag = False
+		else:
+			if cube.co[ind] == 1:
+				printError("solvBottom","corner:",i,"orientation",ind,sc,solv)
+				flag = False
+	return flag
+
+def testSolvBottom2(cube, sc, p=-1):
+	#sc = sc + " " + solvTop2(cube).strip()
+	#sc = sc.strip() + " " + solvMidl(cube).strip()
+	#sc = sc.strip() + " " + rotBottomFace(cube)
+	#sc = sc.strip() + " " + findRightBottomCross(cube).strip()
+
+	#rotateCube(cube, sc.upper())
+	#solv = (solvTop2(cube).strip()+" "+solvBottom2(cube).strip()).strip()
+
+	#solv = solvBottom2(cube).strip()
+	
+	sc = sc + " " + solvTop2(cube).strip()
+	solv = solvBottom2(cube).strip()
+	#print(cube.cp[:4])
+	
+	flag = True
+	for i in range(0,4):
+		ind = cube.cp.index(i)
+		if ind != i:
+			printError("solvBottom2","corner:",i,"position",ind,sc,solv)
+			flag = False
+		else:
+			if cube.co[ind] == 1:
+				printError("solvBottom2","corner:",i,"orientation",ind,sc,solv)
 				flag = False
 	return flag
 
@@ -162,8 +233,11 @@ def tests():
 	printFunctionTests(testSolvTop, "testSolvTop", testCount)
 	printFunctionTests(testFindMidlEdge, "testFindMidlEdge", testCount)
 	printFunctionTests(testSolvMidl, "testSolvMidl", testCount)
-	printFunctionTests(testBottomCross, "testBottomCross", testCount)
+	printFunctionTests(testFindBottomCross, "testFindBottomCross", testCount)
+	printFunctionTests(testFindRightBottomCross, "testFindRightBottomCross", testCount)
 	printFunctionTests(testSolvBottom, "testSolvBottom", testCount)
+	printFunctionTests(testSolvTop2, "testSolvTop2", testCount)
+	printFunctionTests(testSolvBottom2, "testSolvBottom2", testCount)
 
 def individualTest(funcName, sc, param):
 	cube = cube_t()

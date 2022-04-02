@@ -55,7 +55,8 @@ function afterSend(result) {
     let jsonObj = JSON.parse(result, (key, value) => {
         return value;
     });
-    console.info("task:" + jsonObj.task + ";\nsolution:" + jsonObj.solution);
+    console.info("task:" + jsonObj.task + ";\nsolution:" + jsonObj.solution+";\nsize:"+jsonObj.size);
+    r.size = int(jsonObj.size)
     r.updateTask(getTask(jsonObj.task));
     r.updateSolver(getSolver(jsonObj.solution));
     r.geom = new RubicGeometry(r.size);
