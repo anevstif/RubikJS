@@ -56,7 +56,7 @@ function afterSend(result) {
         return value;
     });
     console.info("task:" + jsonObj.task + ";\nsolution:" + jsonObj.solution+";\nsize:"+jsonObj.size);
-    r.size = int(jsonObj.size)
+    r.size = parseInt(jsonObj.size)
     r.updateTask(getTask(jsonObj.task));
     r.updateSolver(getSolver(jsonObj.solution));
     r.geom = new RubicGeometry(r.size);
