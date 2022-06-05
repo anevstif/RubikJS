@@ -62,6 +62,14 @@ class cube_t:
 				self.eo[E[3]] ^= 1
 			swap(self.ep, E)
 			swap(self.eo, E)
+	
+	def copyCube(cube:cube_t):
+            copyC = cube_t()
+            copyC.cp = list(cube.cp)
+            copyC.co = list(cube.co)
+            copyC.ep = list(cube.ep)
+            copyC.eo = list(cube.eo)
+            return copyC		
 
 def commandToArray(c):
 	dicFace = { "R":5, "L":4, "D":1, "U":0, "F":2, "B":3 }
