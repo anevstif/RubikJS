@@ -63,12 +63,12 @@ class cube_t:
 			swap(self.ep, E)
 			swap(self.eo, E)
 	
-	def copyCube(cube:cube_t):
+	def copyCube():
             copyC = cube_t()
-            copyC.cp = list(cube.cp)
-            copyC.co = list(cube.co)
-            copyC.ep = list(cube.ep)
-            copyC.eo = list(cube.eo)
+            copyC.cp = list(self.cp)
+            copyC.co = list(self.co)
+            copyC.ep = list(self.ep)
+            copyC.eo = list(self.eo)
             return copyC		
 
 def commandToArray(c):
