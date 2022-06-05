@@ -62,14 +62,27 @@ def findTopCorner(cube:cube_t, corner:int):
 def solvTop(cube:cube_t):
 	if cube == None:
 		return ""
+	x1 = cube.copy()
 	edges = [4,5,6,7]
 	corners = [4,5,6,7]
-	solv = rotUpFace(cube).strip()
+	solv1 = rotUpFace(x1).strip()
 	for e in edges:
-		solv = solv.strip() + " " + findTopEdge(cube, e).strip()
+		solv1 = solv1.strip() + " " + findTopEdge(x1, e).strip()
 	for c in corners:
-		solv = solv.strip() + " " + findTopCorner(cube, c).strip()
-	return solv.strip()
+		solv1 = solv1.strip() + " " + findTopCorner(x1, c).strip()
+
+	x2 = cube.copy()
+	edges = [7,6,5,4]
+	corners = [4,5,6,7]
+	solv2 = rotUpFace(x2).strip()
+	for e in edges:
+		solv2 = solv2.strip() + " " + findTopEdge(x2, e).strip()
+	for c in corners:
+		solv1 = solv2.strip() + " " + findTopCorner(x2, c).strip()
+
+    	if len(solv1) > len(solv1):
+        	return solv1.strip()
+	return solv2.strip()
 
 def solvTop2(cube:cube_t):
 	if cube == None:
