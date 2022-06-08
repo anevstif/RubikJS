@@ -50,8 +50,8 @@ def findMidlEdge(cube:cube_t, edge:int):
 	rotateCube(cube, solv)
 	return solv
 
-def solvMidl(cube:cube_t):
-	edges = [0,1,2,3]
+def solvMidl(cube:cube_t, edges):
+	
 	solv = ""
 	for e in edges:
 		solv = solv.strip() + " " + findMidlEdge(cube, e).strip()
