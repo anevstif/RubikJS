@@ -24,8 +24,12 @@ def restrictSolv(solv):
 def solver3(a):
 	cube = cube_t()
 	rotateCube(cube, a.upper())
-	solv = restrictSolv(solvTop(cube).strip()+" "+solvMidl(cube).strip()+" "+solvBottom(cube).strip()).strip()
-	print(solv)
+	x1 = cube.copy()
+	solv1 = restrictSolv(solvTop(cube,[4,5,6,7],[4,5,6,7]).strip()+" "+solvMidl(cube,[0,1,2,3]).strip()+" "+solvBottom(cube,[0,1,2,3]).strip()).strip()
+	solv2 = restrictSolv(solvTop(x1,[4,7,6,5],[7,6,5,4]).strip()+" "+solvMidl(x1,[0,1,2,3]).strip()+" "+solvBottom(x1,[0,1,2,3]).strip()).strip()
+	if len(solv1)>len(solv2)
+		print(solv1)
+		else print(solv2)
 
 def solver2(a):
 	cube = cube_t()
