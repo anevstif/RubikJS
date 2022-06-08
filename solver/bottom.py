@@ -126,10 +126,10 @@ def checkEnd(cube):
 		rotateCube(cube, com)
 		return com
 
-def solvBottom(cube):
+def solvBottom(cube, corners):
 	solv = findBottomCross(cube).strip()+" "+rotBottomFace(cube)
 	solv = solv.strip() + " " + findRightBottomCross(cube).strip()
-	corners = [0,1,2,3]
+	
 	for c in corners:
 		solv = solv.strip() + " " + findBottomCorners(cube, c).strip()
 	solv = solv.strip() + " " + rotateBottomCorners(cube).strip()
